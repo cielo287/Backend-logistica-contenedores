@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,14 +20,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TramoRuta {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "solicitud_id")
-    private Long solicitudId;
+    @ManyToOne
+    @JoinColumn(name = "solicitud_id")
+    private Solicitud solicitud;
 
-    @Column(name = "tipo")
+    @Column(name = "tipo_tramo")
     private String tipo;
 
     @Column(name = "ciudad_origen_id")
@@ -48,4 +52,5 @@ public class TramoRuta {
 
     @Column(name = "fecha_real_llegada")
     private LocalDate fechaRealLlegada;
+
 }
