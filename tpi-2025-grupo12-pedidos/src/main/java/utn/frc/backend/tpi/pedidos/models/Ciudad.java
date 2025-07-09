@@ -2,6 +2,8 @@ package utn.frc.backend.tpi.pedidos.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,5 +36,6 @@ public class Ciudad {
     private double longitud;
 
     @OneToMany(mappedBy = "ciudad")
+    @JsonIgnore
     private List<Deposito> depositos;
 }
