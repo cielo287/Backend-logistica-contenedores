@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Getter
 @Setter
@@ -45,5 +47,6 @@ public class Solicitud {
     private double tiempoEstimadoHoras;
 
     @OneToMany(mappedBy = "solicitud")
+    @JsonIgnore
     private List<TramoRuta> tramos;
 }
