@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import utn.frc.backend.tpi.logistica.models.Solicitud;
 import utn.frc.backend.tpi.logistica.repositories.SolicitudRepository;
@@ -13,6 +14,7 @@ public class SolicitudService {
 
     @Autowired
     private SolicitudRepository solicitudRepo;
+
 
     public List<Solicitud> obtenerTodas() {
         return solicitudRepo.findAll();
