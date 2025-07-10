@@ -15,11 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import utn.frc.backend.tpi.pedidos.models.Contenedor;
 import utn.frc.backend.tpi.pedidos.services.ContenedorService;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@RequestMapping("/api/pedidos/contenedor")
+@RequestMapping("/api/pedidos/contenedores")
 
 public class ContenedorController {
 
@@ -32,7 +31,7 @@ public class ContenedorController {
     }
     
     @GetMapping("/{id}")
-    public Contenedor listarPorId(@RequestParam Long id) {
+    public Contenedor listarPorId(@PathVariable Long id) {
         return contenedorService.obtenerPorId(id);
     }
 
