@@ -34,3 +34,5 @@ google:
 servicio:
   ciudades:
     url: http://localhost:8080/api/pedidos
+  depositos:
+    url: http://localhost:8080/api/pedidos
