@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import utn.frc.backend.tpi.pedidos.dtos.CiudadDto;
+import utn.frc.backend.tpi.pedidos.dto.CiudadDto;
 import utn.frc.backend.tpi.pedidos.models.Ciudad;
 import utn.frc.backend.tpi.pedidos.services.CiudadService;
 
