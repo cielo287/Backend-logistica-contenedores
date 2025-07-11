@@ -27,7 +27,7 @@ public class SolicitudService {
         return solicitudRepo.findById(id).orElse(null);
     }
 
-    public Solicitud crear(Solicitud solicitud) {
+    /*public Solicitud crear(Solicitud solicitud) {
         
     // URL base del microservicio de pedidos (ajustá el puerto si es distinto)
     String baseUrl = "http://localhost:8080/api/pedidos";
@@ -48,7 +48,10 @@ public class SolicitudService {
 
     // Guardar la solicitud si todo está OK
     return solicitudRepo.save(solicitud);
-    }
+    }*/
+
+ 
+
 
     public Solicitud actualizar(Long id, Solicitud solicitud) {
         solicitud.setId(id);
