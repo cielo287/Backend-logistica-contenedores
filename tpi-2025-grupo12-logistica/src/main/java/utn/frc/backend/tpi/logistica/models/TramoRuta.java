@@ -41,6 +41,12 @@ public class TramoRuta {
     @Column(name = "orden")
     private int orden;
 
+    @Column(name = "distancia")
+    private Double distancia;
+
+    @Column(name = "tiempo_estimado")
+    private Double tiempoEstimado;
+
     @Column(name = "fecha_estimada_salida")
     private LocalDate fechaEstimadaSalida;
 
