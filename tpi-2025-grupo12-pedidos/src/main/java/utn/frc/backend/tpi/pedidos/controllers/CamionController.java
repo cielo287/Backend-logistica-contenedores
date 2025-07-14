@@ -16,7 +16,7 @@ import utn.frc.backend.tpi.pedidos.models.Camion;
 import utn.frc.backend.tpi.pedidos.services.CamionService;
 
 @RestController
-@RequestMapping("/api/pedidos/camiones")
+@RequestMapping("/camiones")
 public class CamionController {
 
     @Autowired

@@ -18,7 +18,7 @@ import utn.frc.backend.tpi.pedidos.services.ContenedorService;
 
 
 @RestController
-@RequestMapping("/api/pedidos/contenedores")
+@RequestMapping("/contenedores")
 
 public class ContenedorController {
 
