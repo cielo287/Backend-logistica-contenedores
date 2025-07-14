@@ -9,7 +9,7 @@ import utn.frc.backend.tpi.logistica.dtos.TramoRutaDto;
 import utn.frc.backend.tpi.logistica.services.GeoService;
 
 @RestController
-@RequestMapping("/logistica/distancia")
+@RequestMapping("/distancia")
 public class GeoController {
     @Autowired
     private GeoService geoService;

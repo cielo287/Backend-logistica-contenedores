@@ -9,7 +9,7 @@ import utn.frc.backend.tpi.logistica.models.Solicitud;
 import utn.frc.backend.tpi.logistica.services.SolicitudService;
 
 @RestController
-@RequestMapping("/api/logistica/solicitudes")
+@RequestMapping("/solicitudes")
 public class SolicitudController {
 
     @Autowired

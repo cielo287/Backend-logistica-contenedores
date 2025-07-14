@@ -9,7 +9,7 @@ import utn.frc.backend.tpi.logistica.models.Tarifa;
 import utn.frc.backend.tpi.logistica.services.TarifaService;
 
 @RestController
-@RequestMapping("/api/logistica/tarifas")
+@RequestMapping("/tarifas")
 public class TarifaController {
 
     @Autowired

@@ -9,7 +9,7 @@ import utn.frc.backend.tpi.logistica.models.TramoRuta;
 import utn.frc.backend.tpi.logistica.services.TramoRutaService;
 
 @RestController
-@RequestMapping("/api/logistica/tramos-ruta")
+@RequestMapping("/tramos-ruta")
 public class TramoRutaController {
 
     @Autowired
