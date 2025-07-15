@@ -3,6 +3,7 @@ package utn.frc.backend.tpi.pedidos.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,10 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import utn.frc.backend.tpi.pedidos.dto.ContenedorDTO;
 import utn.frc.backend.tpi.pedidos.models.Contenedor;
 import utn.frc.backend.tpi.pedidos.services.ContenedorService;
-
 
 @RestController
 @RequestMapping("/contenedores")
@@ -24,15 +24,20 @@ public class ContenedorController {
 
     @Autowired
     private ContenedorService contenedorService;
-    
+
     @GetMapping
     public List<Contenedor> listar() {
         return contenedorService.obtenerTodos();
     }
-    
+
     @GetMapping("/{id}")
-    public Contenedor listarPorId(@PathVariable Long id) {
-        return contenedorService.obtenerPorId(id);
+    public ResponseEntity<ContenedorDTO> listarPorId(@PathVariable Long id) {
+        Contenedor contenedor = contenedorService.obtenerPorId(id);
+        if (contenedor != null) {
+            return ResponseEntity.ok(new ContenedorDTO(contenedor));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
@@ -41,19 +46,19 @@ public class ContenedorController {
     }
 
     @PutMapping("/{id}")
-    public Contenedor actualizar(@PathVariable Long id, @RequestBody Contenedor contenedor){
+    public Contenedor actualizar(@PathVariable Long id, @RequestBody Contenedor contenedor) {
         return contenedorService.actualizar(id, contenedor);
     }
 
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id){
+    public void eliminar(@PathVariable Long id) {
         contenedorService.eliminar(id);
     }
 
-    //CONTROLLADOR DE CONTENEDOR POR ESTADO
+    // CONTROLLADOR DE CONTENEDOR POR ESTADO
     @GetMapping("/pendientes")
     public List<Contenedor> obtenerContenedoresPendientes() {
         return contenedorService.obtenerPendientesEntrega();
-}
+    }
 
 }

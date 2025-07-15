@@ -1,18 +1,17 @@
 package utn.frc.backend.tpi.logistica.dtos;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ContenedorDto {
+@AllArgsConstructor
+public class CamionDto {
     private Long id;
-    private double peso;
+    private double capacidadPeso;
     private double volumen;
-    private EstadoDto estado;
-    private Long clienteId;
+    private boolean disponibilidad;
 }

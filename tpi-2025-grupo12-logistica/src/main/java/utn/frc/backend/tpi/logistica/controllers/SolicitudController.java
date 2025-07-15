@@ -3,6 +3,8 @@ package utn.frc.backend.tpi.logistica.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import utn.frc.backend.tpi.logistica.dtos.EstadoSolicitudDto;
@@ -22,13 +24,23 @@ public class SolicitudController {
     }
 
     @GetMapping("/{id}")
-    public Solicitud listarPorId(@PathVariable Long id) {
-        return solicitudService.obtenerPorId(id);
+    public ResponseEntity<Solicitud> listarPorId(@PathVariable Long id) {
+        Solicitud solicitud = solicitudService.obtenerPorId(id);
+        if (solicitud != null) {
+            return ResponseEntity.ok(solicitud);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
-    public Solicitud crear(@RequestBody Solicitud solicitud) {
-        return solicitudService.crear(solicitud);
+    public ResponseEntity<Solicitud> crear(@RequestBody Solicitud solicitud) {
+        try {
+            Solicitud nueva = solicitudService.crear(solicitud);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @PutMapping("/{id}")
@@ -44,12 +56,9 @@ public class SolicitudController {
     // CONTROLLADOR DE SOLICITUD POR ESTADO
     @GetMapping("/clientes/{clienteId}/solicitudes/{solicitudId}/estado")
     public EstadoSolicitudDto obtenerEstadoSolicitud(
-        @PathVariable Long clienteId,
-        @PathVariable Long solicitudId
-        ) 
-    {
-    return solicitudService.obtenerEstadoSolicitud(solicitudId, clienteId);
+            @PathVariable Long clienteId,
+            @PathVariable Long solicitudId) {
+        return solicitudService.obtenerEstadoSolicitud(solicitudId, clienteId);
     }
-
 
 }

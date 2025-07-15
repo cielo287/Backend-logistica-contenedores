@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
+import jakarta.persistence.CascadeType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -41,12 +42,12 @@ public class Solicitud {
     private Long camionId;
 
     @Column(name = "costo_estimado")
-    private double costoEstimado;
+    private Double costoEstimado;
 
     @Column(name = "tiempo_estimado_horas")
-    private double tiempoEstimadoHoras;
+    private Double tiempoEstimadoHoras;
 
-    @OneToMany(mappedBy = "solicitud")
+    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<TramoRuta> tramos;
 }
