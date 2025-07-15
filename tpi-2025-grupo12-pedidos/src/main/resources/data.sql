@@ -29,10 +29,10 @@ INSERT INTO camion (capacidad_peso, volumen, disponibilidad) VALUES
 -- ESTADOS DE CONTENEDORES
 -- ====================
 INSERT INTO estado (nombre) VALUES 
-  ('Pendiente'),
-  ('En tránsito'),
-  ('Entregado'),
-  ('Demorado');
+  ('Retirado de origen'),
+  ('Entregado en depósito'),
+  ('Retirado de depósito'),
+  ('Entregado en destino');
 
 -- ====================
 -- CONTENEDORES
@@ -41,7 +41,9 @@ INSERT INTO contenedor (peso, volumen, estado_id, cliente_id) VALUES
   (500.0, 4.0, 1, 1),
   (800.0, 6.5, 2, 2),
   (1200.0, 8.0, 3, 3),
-  (700.0, 5.0, 1, 4);
+  (700.0, 5.0, 1, 4),
+  (1300.0, 9.0, 4, 1), -- Entregado en destino
+  (950.0, 6.8, 4, 2); -- Entregado en destino
 
 -- ====================
 -- DEPÓSITOS

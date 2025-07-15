@@ -11,15 +11,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import utn.frc.backend.tpi.pedidos.dto.ContenedorDTO;
 import utn.frc.backend.tpi.pedidos.mapper.ContenedorMapper;
 import utn.frc.backend.tpi.pedidos.models.Contenedor;
 import utn.frc.backend.tpi.pedidos.services.ContenedorService;
 
-
 @RestController
-@RequestMapping("/api/pedidos/contenedores")
+@RequestMapping("/contenedores")
 
 public class ContenedorController {
 
@@ -33,11 +31,12 @@ public class ContenedorController {
     public List<ContenedorDTO> listar() {
         return contenedorService.obtenerTodos().stream().map(contenedorMapper::toDTO).toList();
     }
-    
+
     @GetMapping("/{id}")
     public ContenedorDTO listarPorId(@PathVariable Long id) {
         Contenedor contenedor = contenedorService.obtenerPorId(id);
         return contenedorMapper.toDTO(contenedor);
+
     }
 
     @PostMapping
@@ -51,13 +50,19 @@ public class ContenedorController {
     @PutMapping("/{id}")
     public ContenedorDTO actualizar(@PathVariable Long id, @RequestBody ContenedorDTO contenedorDTO){
         Contenedor contenedorActualizado = contenedorService.actualizar(id, contenedorMapper.toEntity(contenedorDTO));
-        return contenedorMapper.toDTO(contenedorActualizado);
-    }
+        return contenedorMapper.toDTO(contenedorActualizado);}
+
+
 
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id){
+    public void eliminar(@PathVariable Long id) {
         contenedorService.eliminar(id);
     }
-    
+
+    // CONTROLLADOR DE CONTENEDOR POR ESTADO
+    @GetMapping("/pendientes")
+    public List<Contenedor> obtenerContenedoresPendientes() {
+        return contenedorService.obtenerPendientesEntrega();
+    }
 
 }

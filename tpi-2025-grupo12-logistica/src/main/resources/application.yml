@@ -33,6 +33,10 @@ google:
 
 servicio:
   ciudades:
-    url: http://localhost:8080/api/pedidos
+    url: http://localhost:8082/api/pedidos
   depositos:
-    url: http://localhost:8080/api/pedidos
+    url: http://localhost:8082/api/pedidos
+  camiones:
+    url: http://localhost:8082/api/pedidos
+  contenedores:
+    url: http://localhost:8082/api/pedidos

@@ -59,4 +59,10 @@ public class ContenedorService {
         contenedorRepo.deleteById(id);
     }
 
+    //CONSULTA DE CONTENEDORES POR ESTADO NO ENTREGADO
+    public List<Contenedor> obtenerPendientesEntrega() {
+    return contenedorRepo.findByEstadoNombreNot("Entregado en destino");
+}
+
+
 }

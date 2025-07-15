@@ -18,7 +18,7 @@ import utn.frc.backend.tpi.pedidos.models.Ciudad;
 import utn.frc.backend.tpi.pedidos.services.CiudadService;
 
 @RestController
-@RequestMapping("/api/pedidos/ciudades")
+@RequestMapping("/ciudades")
 public class CiudadController {
 
     @Autowired

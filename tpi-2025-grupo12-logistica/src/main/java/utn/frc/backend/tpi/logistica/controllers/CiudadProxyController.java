@@ -7,7 +7,7 @@ import utn.frc.backend.tpi.logistica.dtos.CiudadDto;
 import org.springframework.http.ResponseEntity;
 
 @RestController
-@RequestMapping("/api/logistica/ciudades")
+@RequestMapping("/ciudades")
 public class CiudadProxyController {
 
     @Autowired
