@@ -49,6 +49,11 @@ public class ContenedorController {
     public void eliminar(@PathVariable Long id){
         contenedorService.eliminar(id);
     }
-    
+
+    //CONTROLLADOR DE CONTENEDOR POR ESTADO
+    @GetMapping("/pendientes")
+    public List<Contenedor> obtenerContenedoresPendientes() {
+        return contenedorService.obtenerPendientesEntrega();
+}
 
 }

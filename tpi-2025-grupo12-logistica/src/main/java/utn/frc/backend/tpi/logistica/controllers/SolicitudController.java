@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import utn.frc.backend.tpi.logistica.dtos.EstadoSolicitudDto;
 import utn.frc.backend.tpi.logistica.models.Solicitud;
 import utn.frc.backend.tpi.logistica.services.SolicitudService;
 
@@ -39,4 +40,16 @@ public class SolicitudController {
     public void eliminar(@PathVariable Long id) {
         solicitudService.eliminar(id);
     }
+
+    // CONTROLLADOR DE SOLICITUD POR ESTADO
+    @GetMapping("/clientes/{clienteId}/solicitudes/{solicitudId}/estado")
+    public EstadoSolicitudDto obtenerEstadoSolicitud(
+        @PathVariable Long clienteId,
+        @PathVariable Long solicitudId
+        ) 
+    {
+    return solicitudService.obtenerEstadoSolicitud(solicitudId, clienteId);
+    }
+
+
 }
