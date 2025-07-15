@@ -18,7 +18,7 @@ import utn.frc.backend.tpi.pedidos.models.Deposito;
 import utn.frc.backend.tpi.pedidos.services.DepositoService;
 
 @RestController
-@RequestMapping("/api/pedidos/depositos")
+@RequestMapping("/depositos")
 public class DepositoController {
 
     @Autowired

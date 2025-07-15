@@ -16,7 +16,7 @@ import utn.frc.backend.tpi.pedidos.models.Estado;
 import utn.frc.backend.tpi.pedidos.services.EstadoService;
 
 @RestController
-@RequestMapping("api/pedidos/estados")
+@RequestMapping("/estados")
 public class EstadoController {
 
     @Autowired
