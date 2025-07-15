@@ -1,5 +1,7 @@
 package utn.frc.backend.tpi.pedidos.dto;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +11,7 @@ import utn.frc.backend.tpi.pedidos.models.Camion;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class CamionDTO {
+public class CamionDTO implements Serializable {
     private Long id;
     private double capacidadPeso;
     private boolean disponibilidad;

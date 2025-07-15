@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import utn.frc.backend.tpi.pedidos.dto.ContenedorDTO;
+import utn.frc.backend.tpi.pedidos.mapper.ContenedorMapper;
 import utn.frc.backend.tpi.pedidos.models.Contenedor;
 import utn.frc.backend.tpi.pedidos.services.ContenedorService;
 
@@ -24,25 +25,33 @@ public class ContenedorController {
 
     @Autowired
     private ContenedorService contenedorService;
+
+    @Autowired
+    private ContenedorMapper contenedorMapper;
     
     @GetMapping
-    public List<Contenedor> listar() {
-        return contenedorService.obtenerTodos();
+    public List<ContenedorDTO> listar() {
+        return contenedorService.obtenerTodos().stream().map(contenedorMapper::toDTO).toList();
     }
     
     @GetMapping("/{id}")
-    public Contenedor listarPorId(@PathVariable Long id) {
-        return contenedorService.obtenerPorId(id);
+    public ContenedorDTO listarPorId(@PathVariable Long id) {
+        Contenedor contenedor = contenedorService.obtenerPorId(id);
+        return contenedorMapper.toDTO(contenedor);
     }
 
     @PostMapping
-    public Contenedor crear(@RequestBody Contenedor contenedor) {
-        return contenedorService.crear(contenedor);
+    public ContenedorDTO crear(@RequestBody ContenedorDTO contenedorDTO) {
+        Contenedor contenedor = contenedorMapper.toEntity(contenedorDTO);
+        Contenedor guardado = contenedorService.crear(contenedor);
+        return contenedorMapper.toDTO(guardado);
+        
     }
 
     @PutMapping("/{id}")
-    public Contenedor actualizar(@PathVariable Long id, @RequestBody Contenedor contenedor){
-        return contenedorService.actualizar(id, contenedor);
+    public ContenedorDTO actualizar(@PathVariable Long id, @RequestBody ContenedorDTO contenedorDTO){
+        Contenedor contenedorActualizado = contenedorService.actualizar(id, contenedorMapper.toEntity(contenedorDTO));
+        return contenedorMapper.toDTO(contenedorActualizado);
     }
 
     @DeleteMapping("/{id}")
