@@ -40,9 +40,3 @@ servicio:
     url: http://localhost:8082/api/pedidos
   contenedores:
     url: http://localhost:8082/api/pedidos
-
-
-logging:
-  level:
-    org.springframework.web.client: DEBUG
-    org.springframework.http.converter: TRACE
