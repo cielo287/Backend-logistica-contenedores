@@ -29,14 +29,11 @@ public class TramoRuta {
     @JoinColumn(name = "solicitud_id")
     private Solicitud solicitud;
 
-    @Column(name = "tipo_tramo")
-    private String tipo;
+    @Column(name = "ubicacion_origen_id")
+    private Long ubicacionOrigenId;
 
-    @Column(name = "ciudad_origen_id")
-    private Long ciudadOrigenId;
-
-    @Column(name = "ciudad_destino_id")
-    private Long ciudadDestinoId;
+    @Column(name = "ubicacion_destino_id")
+    private Long ubicacionDestinoId;
 
     @Column(name = "orden")
     private int orden;
@@ -46,12 +43,6 @@ public class TramoRuta {
 
     @Column(name = "tiempo_estimado")
     private Double tiempoEstimado;
-
-    @Column(name = "fecha_estimada_salida")
-    private LocalDate fechaEstimadaSalida;
-
-    @Column(name = "fecha_estimada_llegada")
-    private LocalDate fechaEstimadaLlegada;
 
     @Column(name = "fecha_real_salida")
     private LocalDate fechaRealSalida;

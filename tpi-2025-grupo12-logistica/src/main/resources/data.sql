@@ -15,8 +15,18 @@ INSERT INTO solicitud (contenedor_id, ciudad_origen_id, ciudad_destino_id, depos
 -- ====================
 -- TRAMOS DE RUTA
 -- ====================
-INSERT INTO tramo_ruta (solicitud_id, tipo_tramo, ciudad_origen_id, ciudad_destino_id, orden, fecha_estimada_salida, fecha_estimada_llegada, fecha_real_salida, fecha_real_llegada) VALUES
-  (1, 'ORIGEN_DEP', 1, 2, 1, '2025-07-01', '2025-07-02', '2025-07-01', '2025-07-02'),
-  (1, 'DEP_DESTINO', 2, 3, 2, '2025-07-03', '2025-07-04', '2025-07-03', '2025-07-04'),
-  (2, 'ORIGEN_DEP', 2, 3, 1, '2025-07-05', '2025-07-06', '2025-07-05', '2025-07-06'),
-  (2, 'DEP_DESTINO', 3, 4, 2, '2025-07-07', '2025-07-08', '2025-07-07', '2025-07-08');
+INSERT INTO tramo_ruta (
+    solicitud_id,
+    ubicacion_origen_id,
+    ubicacion_destino_id,
+    orden,
+    fecha_real_salida,
+    fecha_real_llegada,
+    distancia,
+    tiempo_estimado
+) VALUES
+  (1, 1, 2, 1, '2025-07-01', '2025-07-02', NULL, NULL),
+  (1, 2, 3, 2, '2025-07-03', '2025-07-04', NULL, NULL),
+  (2, 2, 3, 1, '2025-07-05', '2025-07-06', NULL, NULL),
+  (2, 3, 4, 2, '2025-07-07', '2025-07-08', NULL, NULL);
+
