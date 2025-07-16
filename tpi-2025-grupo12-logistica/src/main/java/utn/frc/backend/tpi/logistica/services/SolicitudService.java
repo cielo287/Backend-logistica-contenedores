@@ -42,6 +42,16 @@ public class SolicitudService {
         return solicitudRepo.findById(id).orElse(null);
     }
 
+    private void validarPesos(ContenedorDto contenedor, CamionDto camion) {
+    if (contenedor.getPeso() > camion.getCapacidadPeso()) {
+        throw new RuntimeException("El peso del contenedor excede la capacidad del camión.");
+    }
+    if (contenedor.getVolumen() > camion.getVolumen()) {
+        throw new RuntimeException("El volumen del contenedor excede la capacidad del camión.");
+    }
+    }
+
+
     public Solicitud crear(Solicitud solicitud) {
         // Validaciones básicas de existencia camion y contenedor
         String contenedorUrl = baseUrl + "/contenedores/" + solicitud.getContenedorId();
@@ -53,6 +63,9 @@ public class SolicitudService {
         CamionDto camion = restTemplate.getForObject(camionUrl, CamionDto.class);
         if (camion == null)
             throw new RuntimeException("Camión no encontrado");
+
+        //Validar que el peso del contenedor no supere el del camion
+        validarPesos(contenedor, camion);
 
         List<TramoRuta> tramos = new ArrayList<>();
 

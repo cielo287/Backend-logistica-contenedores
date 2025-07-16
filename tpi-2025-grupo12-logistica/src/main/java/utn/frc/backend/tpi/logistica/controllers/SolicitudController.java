@@ -34,13 +34,18 @@ public class SolicitudController {
     }
 
     @PostMapping
-    public ResponseEntity<Solicitud> crear(@RequestBody Solicitud solicitud) {
+    public ResponseEntity<?> crear(@RequestBody Solicitud solicitud) {
         try {
             Solicitud nueva = solicitudService.crear(solicitud);
             return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
-        } catch (Exception e) {
+        /*} catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        }*/
+        } catch (Exception e) {
+            e.printStackTrace(); // Esto lo ves en consola
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body("Error al crear solicitud: " + e.getMessage());
+}
     }
 
     @PutMapping("/{id}")
