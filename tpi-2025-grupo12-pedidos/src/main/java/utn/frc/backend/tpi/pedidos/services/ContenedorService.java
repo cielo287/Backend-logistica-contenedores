@@ -1,6 +1,6 @@
 package utn.frc.backend.tpi.pedidos.services;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +89,7 @@ public class ContenedorService {
         HistorialEstado historial = new HistorialEstado();
         historial.setContenedor(contenedor);
         historial.setEstado(estado);
-        historial.setFechaCambio(LocalDateTime.now());
+        historial.setFechaCambio(LocalDate.now());
         historialEstadoRepo.save(historial);
 
         return contenedor;

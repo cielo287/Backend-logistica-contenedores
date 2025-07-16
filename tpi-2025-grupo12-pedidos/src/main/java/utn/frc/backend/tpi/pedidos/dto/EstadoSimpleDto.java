@@ -1,6 +1,6 @@
 package utn.frc.backend.tpi.pedidos.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EstadoSimpleDto {
     private String nombreEstado;
-    private LocalDateTime fechaCambio;
+    private LocalDate fechaCambio;
 }

@@ -1,6 +1,6 @@
 package utn.frc.backend.tpi.pedidos.models;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,5 +32,5 @@ public class HistorialEstado {
     @JoinColumn(name = "estado_id")
     private Estado estado;
 
-    private LocalDateTime fechaCambio;
+    private LocalDate fechaCambio;
 }
