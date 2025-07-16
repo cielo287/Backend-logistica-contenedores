@@ -95,11 +95,7 @@ public class ContenedorService {
         return contenedor;
     }
 
-    //METODO PARA CONSULTAR EL HISTORIAL
-    public List<HistorialEstado> obtenerHistorial(Long contenedorId) {
-    return historialEstadoRepo.findByContenedorIdOrderByFechaCambioAsc(contenedorId);
-    }
-
+    
     //METODO PARA DEVOLVER EL DTO DEL HISTORIAL
     public List<EstadoSimpleDto> obtenerHistorialSimplificado(Long contenedorId) {
         List<HistorialEstado> historialOrdenado = historialEstadoRepo.findByContenedorIdOrderByFechaCambioAsc(contenedorId);
