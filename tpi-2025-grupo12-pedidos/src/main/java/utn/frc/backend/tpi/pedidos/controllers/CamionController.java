@@ -3,7 +3,6 @@ package utn.frc.backend.tpi.pedidos.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import utn.frc.backend.tpi.pedidos.dto.CamionDTO;
+import utn.frc.backend.tpi.pedidos.mapper.CamionMapper;
 import utn.frc.backend.tpi.pedidos.models.Camion;
 import utn.frc.backend.tpi.pedidos.services.CamionService;
 
@@ -24,29 +24,31 @@ public class CamionController {
     @Autowired
     private CamionService camionServicio;
 
+    @Autowired
+    private CamionMapper camionMapper;
+
     @GetMapping
-    public List<Camion> listar() {
-        return camionServicio.obtenerTodos();
+    public List<CamionDTO> listar() {
+        return camionServicio.obtenerTodos().stream().map(camionMapper::toDto).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CamionDTO> listarPorId(@PathVariable Long id) {
+    public CamionDTO listarPorId(@PathVariable Long id) {
         Camion camion = camionServicio.obtenerPorId(id);
-        if (camion != null) {
-            return ResponseEntity.ok(new CamionDTO(camion));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return camionMapper.toDto(camion);
     }
 
     @PostMapping
-    public Camion crear(@RequestBody Camion camion) {
-        return camionServicio.crear(camion);
+    public CamionDTO crear(@RequestBody CamionDTO camionDTO) {
+        Camion camion = camionMapper.toEntity(camionDTO);
+        Camion save = camionServicio.crear(camion);
+        return camionMapper.toDto(save);
     }
 
     @PutMapping("/{id}")
-    public Camion actualizar(@PathVariable Long id, @RequestBody Camion camion) {
-        return camionServicio.actualizar(id, camion);
+    public CamionDTO actualizar(@PathVariable Long id, @RequestBody CamionDTO camionDTO) {
+        Camion camionActualizado = camionServicio.actualizar(id, camionMapper.toEntity(camionDTO));
+        return camionMapper.toDto(camionActualizado);
 
     }
 

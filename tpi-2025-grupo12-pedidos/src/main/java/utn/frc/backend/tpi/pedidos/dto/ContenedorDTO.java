@@ -17,7 +17,7 @@ public class ContenedorDTO implements Serializable {
     private double volumen;
     private ClienteDTO cliente;
     private EstadoDTO estado;
-    private Long estadoId;
+    //private Long estadoId;
 
     
 
@@ -25,6 +25,6 @@ public class ContenedorDTO implements Serializable {
         this.id = contenedor.getId();
         this.peso = contenedor.getPeso();
         this.volumen = contenedor.getVolumen();
-        this.estadoId = contenedor.getEstado() != null ? contenedor.getEstado().getId() : null;
+        //this.estadoId = contenedor.getEstado() != null ? contenedor.getEstado().getId() : null;
     }
 }

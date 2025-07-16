@@ -7,7 +7,7 @@ import utn.frc.backend.tpi.pedidos.models.Camion;
 
 @Mapper(componentModel = "spring")
 public interface CamionMapper {
-    CamionDTO tDto(Camion camion);
+    CamionDTO toDto(Camion camion);
     Camion toEntity(CamionDTO dto);
 
 }
