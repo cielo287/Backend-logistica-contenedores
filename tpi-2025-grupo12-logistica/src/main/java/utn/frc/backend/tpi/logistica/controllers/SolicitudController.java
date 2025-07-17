@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import utn.frc.backend.tpi.logistica.dtos.EstadoSolicitudDto;
+import utn.frc.backend.tpi.logistica.dtos.SolicitudDto;
+import utn.frc.backend.tpi.logistica.mappers.SolicitudMapper;
 import utn.frc.backend.tpi.logistica.models.Solicitud;
 import utn.frc.backend.tpi.logistica.services.SolicitudService;
 
@@ -18,39 +20,44 @@ public class SolicitudController {
     @Autowired
     private SolicitudService solicitudService;
 
+    @Autowired
+    private SolicitudMapper solicitudMapper;
+
     @GetMapping
-    public List<Solicitud> listar() {
-        return solicitudService.obtenerTodas();
+    public List<SolicitudDto> listar() {
+        return solicitudService.obtenerTodas().stream().map(solicitudMapper::toDto).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Solicitud> listarPorId(@PathVariable Long id) {
+    public SolicitudDto listarPorId(@PathVariable Long id) {
         Solicitud solicitud = solicitudService.obtenerPorId(id);
-        if (solicitud != null) {
+        return solicitudMapper.toDto(solicitud);
+        /*if (solicitud != null) {
             return ResponseEntity.ok(solicitud);
         } else {
             return ResponseEntity.notFound().build();
-        }
+        }*/
     }
 
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Solicitud solicitud) {
+    public ResponseEntity<?> crear(@RequestBody SolicitudDto solicitudDto) {
         try {
+            Solicitud solicitud = solicitudMapper.toEntity(solicitudDto);
             Solicitud nueva = solicitudService.crear(solicitud);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
-        /*} catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }*/
+            SolicitudDto rtaDto = solicitudMapper.toDto(nueva);
+            return ResponseEntity.status(HttpStatus.CREATED).body(rtaDto);
+   
         } catch (Exception e) {
-            e.printStackTrace(); // Esto lo ves en consola
+            e.printStackTrace(); 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body("Error al crear solicitud: " + e.getMessage());
-}
+        }
     }
 
     @PutMapping("/{id}")
-    public Solicitud actualizar(@PathVariable Long id, @RequestBody Solicitud solicitud) {
-        return solicitudService.actualizar(id, solicitud);
+    public SolicitudDto actualizar(@PathVariable Long id, @RequestBody SolicitudDto solicitudDto) {
+        Solicitud solicitudActualizada = solicitudService.actualizar(id, solicitudMapper.toEntity(solicitudDto));
+        return solicitudMapper.toDto(solicitudActualizada);
     }
 
     @DeleteMapping("/{id}")
