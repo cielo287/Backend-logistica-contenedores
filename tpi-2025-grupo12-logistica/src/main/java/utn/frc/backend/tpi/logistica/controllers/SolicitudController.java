@@ -38,11 +38,8 @@ public class SolicitudController {
         try {
             Solicitud nueva = solicitudService.crear(solicitud);
             return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
-        /*} catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }*/
         } catch (Exception e) {
-            e.printStackTrace(); // Esto lo ves en consola
+            e.printStackTrace(); 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body("Error al crear solicitud: " + e.getMessage());
 }
