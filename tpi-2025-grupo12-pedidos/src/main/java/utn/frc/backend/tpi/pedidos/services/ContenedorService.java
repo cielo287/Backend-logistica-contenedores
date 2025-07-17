@@ -40,7 +40,7 @@ public class ContenedorService {
     public Contenedor obtenerPorId(Long id){
         //return contenedorRepo.findById(id).orElseThrow(() -> new RuntimeException("Contenedor no encontrado"));
         return contenedorRepo.findById(id)
-    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Contenedor no encontrado"));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Contenedor no encontrado"));
 
     }
 
