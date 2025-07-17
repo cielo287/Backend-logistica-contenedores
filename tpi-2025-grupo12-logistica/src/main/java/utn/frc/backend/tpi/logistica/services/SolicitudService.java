@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import utn.frc.backend.tpi.logistica.dtos.CamionDto;
 import utn.frc.backend.tpi.logistica.dtos.ContenedorDto;
@@ -39,7 +41,9 @@ public class SolicitudService {
     }
 
     public Solicitud obtenerPorId(Long id) {
-        return solicitudRepo.findById(id).orElse(null);
+
+        return solicitudRepo.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró solicitud con id " + id));
     }
 
     private void validarPesos(ContenedorDto contenedor, CamionDto camion) {
