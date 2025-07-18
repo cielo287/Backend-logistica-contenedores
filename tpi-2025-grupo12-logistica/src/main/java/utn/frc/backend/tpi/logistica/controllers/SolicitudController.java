@@ -32,11 +32,6 @@ public class SolicitudController {
     public SolicitudDto listarPorId(@PathVariable Long id) {
         Solicitud solicitud = solicitudService.obtenerPorId(id);
         return solicitudMapper.toDto(solicitud);
-        /*if (solicitud != null) {
-            return ResponseEntity.ok(solicitud);
-        } else {
-            return ResponseEntity.notFound().build();
-        }*/
     }
 
     @PostMapping

@@ -33,6 +33,9 @@ public class SolicitudService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    TramoRutaService tramoRutaService;
+
     @Value("${servicio.pedidos.url:http://localhost:8082/api/pedidos}")
     private String baseUrl;
 
@@ -71,67 +74,23 @@ public class SolicitudService {
         //Validar que el peso del contenedor no supere el del camion
         validarPesos(contenedor, camion);
 
-        List<TramoRuta> tramos = new ArrayList<>();
-
-        try {
-            if (solicitud.getDepositoId() != null) {
-                // Tramo Ciudad → Depósito
-                TramoRutaDto tramo1Dto = geoService.calcularDistanciaCiudadADeposito(
-                        solicitud.getCiudadOrigenId(), solicitud.getDepositoId());
-
-                TramoRuta tramo1 = new TramoRuta();
-                tramo1.setOrden(1);
-                tramo1.setUbicacionOrigenId(solicitud.getCiudadOrigenId());
-                tramo1.setUbicacionDestinoId(solicitud.getDepositoId());
-                tramo1.setDistancia(tramo1Dto.getDistancia());
-                tramo1.setTiempoEstimado(tramo1Dto.getTiempoEstimado());
-                tramo1.setSolicitud(solicitud);
-                tramos.add(tramo1);
-
-                // Tramo Depósito → Ciudad destino
-                TramoRutaDto tramo2Dto = geoService.calcularDistanciaDepositoACiudad(
-                        solicitud.getDepositoId(), solicitud.getCiudadDestinoId());
-
-                TramoRuta tramo2 = new TramoRuta();
-                tramo2.setOrden(2);
-                tramo2.setUbicacionOrigenId(solicitud.getDepositoId());
-                tramo2.setUbicacionDestinoId(solicitud.getCiudadDestinoId());
-                tramo2.setDistancia(tramo2Dto.getDistancia());
-                tramo2.setTiempoEstimado(tramo2Dto.getTiempoEstimado());
-                tramo2.setSolicitud(solicitud);
-                tramos.add(tramo2);
-            } else {
-                // Tramo único Ciudad → Ciudad
-                TramoRutaDto tramoDto = geoService.calcularDistanciaEntreCiudades(
-                        solicitud.getCiudadOrigenId(), solicitud.getCiudadDestinoId());
-
-                TramoRuta tramo = new TramoRuta();
-                tramo.setOrden(1);
-                tramo.setUbicacionOrigenId(solicitud.getCiudadOrigenId());
-                tramo.setUbicacionDestinoId(solicitud.getCiudadDestinoId());
-                tramo.setDistancia(tramoDto.getDistancia());
-                tramo.setTiempoEstimado(tramoDto.getTiempoEstimado());
-                tramo.setSolicitud(solicitud);
-                tramos.add(tramo);
-            }
-
-            solicitud.setTramos(tramos);
-
-            // Calcular costo estimado usando tarifaService
-            double costo = tarifaService.calcularTarifaSolicitud(solicitud);
-            solicitud.setCostoEstimado(costo);
-
-            // Calcular tiempo estimado total (horas)
-            double tiempoTotal = tramos.stream()
-                    .filter(t -> t.getTiempoEstimado() != null)
-                    .mapToDouble(TramoRuta::getTiempoEstimado)
-                    .sum();
-            solicitud.setTiempoEstimadoHoras(tiempoTotal);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error al calcular tramos o tarifa: " + e.getMessage());
+        List<TramoRuta> tramos = tramoRutaService.generarTramos(solicitud);
+        
+        if (tramos == null || tramos.isEmpty()) {
+        throw new RuntimeException("Error al crear solicitud: No se pudieron generar tramos de ruta.");
         }
+
+        solicitud.setTramos(tramos);
+
+        // Calcular costo estimado usando tarifaService
+        double costo = tarifaService.calcularTarifaSolicitud(solicitud);
+        solicitud.setCostoEstimado(costo);
+
+        // Calcular tiempo estimado total (horas)
+         double tiempoTotal = tramos.stream().filter(t -> t.getTiempoEstimado() != null)
+        .mapToDouble(TramoRuta::getTiempoEstimado).sum();
+        solicitud.setTiempoEstimadoHoras(tiempoTotal);
+
 
         return solicitudRepo.save(solicitud);
     }
