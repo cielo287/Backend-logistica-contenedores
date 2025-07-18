@@ -50,12 +50,12 @@ public class SolicitudService {
     }
 
     private void validarPesos(ContenedorDto contenedor, CamionDto camion) {
-    if (contenedor.getPeso() > camion.getCapacidadPeso()) {
-        throw new RuntimeException("El peso del contenedor excede la capacidad del camión.");
-    }
-    if (contenedor.getVolumen() > camion.getVolumen()) {
-        throw new RuntimeException("El volumen del contenedor excede la capacidad del camión.");
-    }
+        if (contenedor.getPeso() > camion.getCapacidadPeso()) {
+            throw new RuntimeException("El peso del contenedor excede la capacidad del camión.");
+        }
+        if (contenedor.getVolumen() > camion.getVolumen()) {
+            throw new RuntimeException("El volumen del contenedor excede la capacidad del camión.");
+        }
     }
 
 
