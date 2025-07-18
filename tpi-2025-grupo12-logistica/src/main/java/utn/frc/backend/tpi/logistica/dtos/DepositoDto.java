@@ -12,8 +12,8 @@ public class DepositoDto implements Ubicable {
     private Long id;
     private Long ciudadId;
     private String direccion;
-    private Double lat;
-    private Double lon;
+    private double latitud;
+    private double longitud;
 
     @Override
     public String getTipo() {

@@ -42,18 +42,18 @@ public class TramoRutaController {
     }
 
     @PostMapping
-    public ResponseEntity<TramoRutaDetalleDTO> crear(@RequestBody TramoRutaDetalleDTO dto) {
-        TramoRuta tramo = tramoRutaDetalleMapper.toEntity(dto);
+    public ResponseEntity<TramoRutaDto> crear(@RequestBody TramoRutaDto dto) {
+        TramoRuta tramo = tramoRutaMapper.toEntity(dto);
         TramoRuta creado = tramoRutaService.crear(tramo);
-        return ResponseEntity.ok(tramoRutaDetalleMapper.toDto(creado));
+        return ResponseEntity.ok(tramoRutaMapper.toDto(creado));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TramoRutaDetalleDTO> actualizar(@PathVariable Long id, @RequestBody TramoRutaDetalleDTO dto) {
-        TramoRuta tramo = tramoRutaDetalleMapper.toEntity(dto);
+    public ResponseEntity<TramoRutaDto> actualizar(@PathVariable Long id, @RequestBody TramoRutaDto dto) {
+        TramoRuta tramo = tramoRutaMapper.toEntity(dto);
         tramo.setId(id);
         TramoRuta actualizado = tramoRutaService.actualizar(id, tramo);
-        return ResponseEntity.ok(tramoRutaDetalleMapper.toDto(actualizado));
+        return ResponseEntity.ok(tramoRutaMapper.toDto(actualizado));
     }
 
     @DeleteMapping("/{id}")

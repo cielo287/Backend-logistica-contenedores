@@ -3,9 +3,9 @@ package utn.frc.backend.tpi.logistica.interfaces;
 public interface Ubicable {
     Long getId();
 
-    Double getLat();
+    double getLatitud();
 
-    Double getLon();
+    double getLongitud();
 
     String getTipo(); // "CIUDAD" o "DEPOSITO"
 }

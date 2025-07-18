@@ -11,8 +11,8 @@ import utn.frc.backend.tpi.logistica.interfaces.Ubicable;
 public class CiudadDto implements Ubicable {
     private Long id;
     private String nombre;
-    private Double lat;
-    private Double lon;
+    private double latitud;
+    private double longitud;
 
     @Override
     public String getTipo() {

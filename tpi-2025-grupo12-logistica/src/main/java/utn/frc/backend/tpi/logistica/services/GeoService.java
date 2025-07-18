@@ -141,8 +141,8 @@ public class GeoService {
 
     // Método privado que hace el cálculo real con Google Maps
     private TramoRutaDto calcularDistanciaEntreUbicables(Ubicable origen, Ubicable destino) throws Exception {
-        String origenStr = origen.getLat() + "," + origen.getLon();
-        String destinoStr = destino.getLat() + "," + destino.getLon();
+        String origenStr = origen.getLatitud() + "," + origen.getLongitud();
+        String destinoStr = destino.getLatitud() + "," + destino.getLongitud();
 
         String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="
                 + origenStr + "&destinations=" + destinoStr + "&units=metric&key=" + apiKey;
