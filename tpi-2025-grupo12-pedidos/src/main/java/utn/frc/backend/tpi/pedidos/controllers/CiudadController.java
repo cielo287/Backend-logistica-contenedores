@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import utn.frc.backend.tpi.pedidos.dto.CiudadDto;
+import utn.frc.backend.tpi.pedidos.mapper.CiudadMapper;
 import utn.frc.backend.tpi.pedidos.models.Ciudad;
 import utn.frc.backend.tpi.pedidos.services.CiudadService;
 
@@ -24,9 +25,12 @@ public class CiudadController {
     @Autowired
     private CiudadService ciudadServicio;
 
+    @Autowired
+    private CiudadMapper ciudadMapper;
+
     @GetMapping
-    public List<Ciudad> listar() {
-        return ciudadServicio.obtenerTodos();
+    public List<CiudadDto> listar() {
+        return ciudadMapper.toDtoList(ciudadServicio.obtenerTodos());
     }
 
     @GetMapping("/{id}")
@@ -46,13 +50,17 @@ public class CiudadController {
     }
 
     @PostMapping
-    public Ciudad crear(@RequestBody Ciudad ciudad) {
-        return ciudadServicio.crear(ciudad);
+    public CiudadDto crear(@RequestBody CiudadDto ciudadDto) {
+        Ciudad ciudad = ciudadMapper.toEntity(ciudadDto);
+        Ciudad creada = ciudadServicio.crear(ciudad);
+        return ciudadMapper.toDto(creada);
     }
 
     @PutMapping("/{id}")
-    public Ciudad actualizar(@PathVariable Long id, @RequestBody Ciudad ciudad) {
-        return ciudadServicio.actualizar(id, ciudad);
+    public CiudadDto actualizar(@PathVariable Long id, @RequestBody CiudadDto ciudadDto) {
+        Ciudad ciudad = ciudadMapper.toEntity(ciudadDto);
+        Ciudad actualizada = ciudadServicio.actualizar(id, ciudad);
+        return ciudadMapper.toDto(actualizada);
     }
 
     @DeleteMapping("/{id}")

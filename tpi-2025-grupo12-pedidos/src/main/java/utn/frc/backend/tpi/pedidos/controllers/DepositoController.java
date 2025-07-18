@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import utn.frc.backend.tpi.pedidos.dto.DepositoDto;
+import utn.frc.backend.tpi.pedidos.mapper.DepositoMapper;
 import utn.frc.backend.tpi.pedidos.models.Deposito;
 import utn.frc.backend.tpi.pedidos.services.DepositoService;
 
@@ -24,14 +25,21 @@ public class DepositoController {
     @Autowired
     private DepositoService depositoServicio;
 
+    @Autowired
+    private DepositoMapper depositoMapper;
+
     @GetMapping
-    public List<Deposito> listar() {
-        return depositoServicio.obtenerTodos();
+    public List<DepositoDto> listar() {
+        return depositoMapper.toDtoList(depositoServicio.obtenerTodos());
     }
 
     @GetMapping("/{id}")
-    public Deposito listarPorId(@PathVariable Long id) {
-        return depositoServicio.obtenerPorId(id);
+    public ResponseEntity<DepositoDto> listarPorId(@PathVariable Long id) {
+        Deposito deposito = depositoServicio.obtenerPorId(id);
+        if (deposito == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(depositoMapper.toDto(deposito));
     }
 
     // Para obtener un DTO de Deposito necesario para el calculo de distancias
@@ -53,13 +61,17 @@ public class DepositoController {
     }
 
     @PostMapping
-    public Deposito crear(@RequestBody Deposito deposito) {
-        return depositoServicio.crear(deposito);
+    public DepositoDto crear(@RequestBody DepositoDto depositoDto) {
+        Deposito deposito = depositoMapper.toEntity(depositoDto);
+        Deposito creado = depositoServicio.crear(deposito);
+        return depositoMapper.toDto(creado);
     }
 
     @PutMapping("/{id}")
-    public Deposito actualizar(@PathVariable Long id, @RequestBody Deposito deposito) {
-        return depositoServicio.actualizar(id, deposito);
+    public DepositoDto actualizar(@PathVariable Long id, @RequestBody DepositoDto depositoDto) {
+        Deposito deposito = depositoMapper.toEntity(depositoDto);
+        Deposito actualizado = depositoServicio.actualizar(id, deposito);
+        return depositoMapper.toDto(actualizado);
     }
 
     @DeleteMapping("/{id}")
