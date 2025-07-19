@@ -5,7 +5,6 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import utn.frc.backend.tpi.logistica.models.Solicitud;
 
 @Data
 @NoArgsConstructor

@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
 import utn.frc.backend.tpi.logistica.dtos.TarifaDto;
 import utn.frc.backend.tpi.logistica.mappers.TarifaMapper;
 import utn.frc.backend.tpi.logistica.models.Tarifa;
@@ -17,8 +15,6 @@ import utn.frc.backend.tpi.logistica.services.TarifaService;
 @RequestMapping("/tarifas")
 public class TarifaController {
 
-    @Autowired
-    private RestTemplate restTemplate;
 
     /* FALTA AGREGAR A APP.YML LAS DIRECCIONES URL */
     @Value("${servicio.camiones.url}")

@@ -1,6 +1,6 @@
 package utn.frc.backend.tpi.logistica.services;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 import utn.frc.backend.tpi.logistica.dtos.CamionDto;
 import utn.frc.backend.tpi.logistica.dtos.ContenedorDto;
 import utn.frc.backend.tpi.logistica.dtos.EstadoSolicitudDto;
-import utn.frc.backend.tpi.logistica.dtos.TramoRutaDto;
 import utn.frc.backend.tpi.logistica.models.Solicitud;
 import utn.frc.backend.tpi.logistica.models.TramoRuta;
 import utn.frc.backend.tpi.logistica.repositories.SolicitudRepository;
@@ -26,9 +25,6 @@ public class SolicitudService {
 
     @Autowired
     private TarifaService tarifaService;
-
-    @Autowired
-    private GeoService geoService;
 
     @Autowired
     private RestTemplate restTemplate;
