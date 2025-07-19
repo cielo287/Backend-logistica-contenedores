@@ -2,7 +2,6 @@ package utn.frc.backend.tpi.pedidos.mapper;
 
 import org.mapstruct.Mapper;
 
-import utn.frc.backend.tpi.pedidos.dto.ClienteDTO;
 import utn.frc.backend.tpi.pedidos.dto.ClienteRequestDTO;
 import utn.frc.backend.tpi.pedidos.dto.ClienteResponseDTO;
 import utn.frc.backend.tpi.pedidos.models.Cliente;

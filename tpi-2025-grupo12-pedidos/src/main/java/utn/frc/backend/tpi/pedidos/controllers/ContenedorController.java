@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import utn.frc.backend.tpi.pedidos.dto.ContenedorDTO;
+import utn.frc.backend.tpi.pedidos.dto.ContenedorPendienteDTO;
 import utn.frc.backend.tpi.pedidos.dto.EstadoSimpleDto;
 import utn.frc.backend.tpi.pedidos.mapper.ContenedorMapper;
 import utn.frc.backend.tpi.pedidos.models.Contenedor;
@@ -61,17 +62,21 @@ public class ContenedorController {
         contenedorService.eliminar(id);
     }
 
-    // CONTROLLADOR DE CONTENEDOR POR ESTADO
+    // CONTROLLADOR DE CONTENEDOR POR ESTADO PENDIENTE DE ENTREGA
     @GetMapping("/pendientes")
-    public List<Contenedor> obtenerContenedoresPendientes() {
-        return contenedorService.obtenerPendientesEntrega();
+    public List<ContenedorPendienteDTO> obtenerContenedoresPendientes() {
+    return contenedorService.obtenerPendientesEntrega().stream()
+        .map(ContenedorPendienteDTO::new)
+        .toList();
     }
+
 
     //CONTROLADOR DE ACTUALIZAR EL AVANCE DEL CONTENEDOR
     @PutMapping("/{id}/estado")
     public ContenedorDTO actualizarEstado(@PathVariable Long id, @RequestBody Estado nuevoEstado) {
     Contenedor actualizado = contenedorService.actualizarEstado(id, nuevoEstado.getId());
         return contenedorMapper.toDTO(actualizado);
+        //PARA REALIZAR VALIDADCION DE ESTADO Y DEPOSITO HACER COMUNICACION CON MICRO LOGISTICA
     }
 
     //CONSULTAR HISTORIAL DE ESTADOS DEL CONTENEDOR

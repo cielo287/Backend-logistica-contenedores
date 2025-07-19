@@ -15,7 +15,7 @@ public class ContenedorDTO implements Serializable {
     private Long id;
     private double peso;
     private double volumen;
-    private ClienteDTO cliente;
+    private ClienteResponseDTO cliente;
     private EstadoDTO estado;
     //private Long estadoId;
 

@@ -60,7 +60,7 @@ public class SolicitudController {
         solicitudService.eliminar(id);
     }
 
-    // CONTROLLADOR DE SOLICITUD POR ESTADO
+    // CONTROLLADOR DE SOLICITUD DEL CLIENTE Y SU ESTADO
     @GetMapping("/clientes/{clienteId}/solicitudes/{solicitudId}/estado")
     public EstadoSolicitudDto obtenerEstadoSolicitud(
             @PathVariable Long clienteId,
