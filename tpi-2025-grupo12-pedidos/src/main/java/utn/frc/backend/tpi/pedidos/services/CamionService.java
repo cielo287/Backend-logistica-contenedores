@@ -27,10 +27,12 @@ public class CamionService {
     }
 
     public Camion crear(Camion camion){
+        validarCamion(camion);
         return camionRepo.save(camion);
     }
 
     public Camion actualizar(Long id, Camion camion){
+        validarCamion(camion);
         camion.setId(id);
         return camionRepo.save(camion);
     }
@@ -38,4 +40,17 @@ public class CamionService {
     public void eliminar(Long id){
         camionRepo.deleteById(id);
     }
+
+    //VALIDACIONES DE CAMION
+
+    private void validarCamion(Camion camion) {
+    if (camion.getCapacidadPeso() <= 0) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La capacidad de peso debe ser mayor a cero.");
+    }
+
+    if (camion.getVolumen() <= 0) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El volumen debe ser mayor a cero.");
+    }
+    }
+
 }
