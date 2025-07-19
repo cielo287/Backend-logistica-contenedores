@@ -33,6 +33,9 @@ public class ContenedorService {
     @Autowired
     private HistorialEstadoRepository historialEstadoRepo;
 
+    public static final String ESTADO_FINAL = "Entregado en destino";
+
+
     public List<Contenedor> obtenerTodos(){
         return contenedorRepo.findAll();
     }
@@ -70,15 +73,18 @@ public class ContenedorService {
         contenedorRepo.deleteById(id);
     }
 
-    //CONSULTA DE CONTENEDORES POR ESTADO NO ENTREGADO
+    // CONSULTA DE CONTENEDORES POR ESTADO NO ENTREGADO
     public List<Contenedor> obtenerPendientesEntrega() {
-    return contenedorRepo.findByEstadoNombreNot("Entregado en destino");
+    return contenedorRepo.findByEstadoNombreNot(ESTADO_FINAL);
     }
 
-    //METODO DE ACTUALIZAR EL AVANCE DEL CONTENEDOR
+    // METODO DE ACTUALIZAR EL AVANCE DEL CONTENEDOR
     public Contenedor actualizarEstado(Long contenedorId, Long estadoId) {
 
+        
         Contenedor contenedor = obtenerPorId(contenedorId);
+
+        // VERIFICAR SI ESTADO EXISTE
         Estado estado = estadoRepo.findById(estadoId)
             .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
 
@@ -96,7 +102,7 @@ public class ContenedorService {
     }
 
     
-    //METODO PARA DEVOLVER EL DTO DEL HISTORIAL
+    // METODO PARA DEVOLVER EL DTO DEL HISTORIAL
     public List<EstadoSimpleDto> obtenerHistorialSimplificado(Long contenedorId) {
         List<HistorialEstado> historialOrdenado = historialEstadoRepo.findByContenedorIdOrderByFechaCambioAsc(contenedorId);
 

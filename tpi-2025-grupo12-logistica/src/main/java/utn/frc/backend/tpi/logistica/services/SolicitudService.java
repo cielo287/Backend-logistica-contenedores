@@ -102,9 +102,11 @@ public class SolicitudService {
 
     // METODO PARA OBTENER LAS SOLICITUDES SEGUN EL ESTADO
     public EstadoSolicitudDto obtenerEstadoSolicitud(Long solicitudId, Long clienteId) {
+        // BUSCAR SOLICITUD
         Solicitud solicitud = solicitudRepo.findById(solicitudId)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
+        // VERIFICAR SI CONTENEDOR EXISTE
         String contenedorUrl = baseUrl + "/contenedores/" + solicitud.getContenedorId();
         ContenedorDto contenedor = restTemplate.getForObject(contenedorUrl, ContenedorDto.class);
 
@@ -112,6 +114,7 @@ public class SolicitudService {
             throw new RuntimeException("Contenedor no encontrado");
         }
 
+        //VERIFICAR QUE EL CONTENEDOR PERTENEZCA AL CLIENTE
         if (!contenedor.getClienteId().equals(clienteId)) {
             throw new RuntimeException("El cliente no tiene acceso a esta solicitud");
         }
