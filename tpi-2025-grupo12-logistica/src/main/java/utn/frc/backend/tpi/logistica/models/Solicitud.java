@@ -6,10 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 import java.util.List;
 import jakarta.persistence.CascadeType;
 
@@ -46,6 +49,10 @@ public class Solicitud {
 
     @Column(name = "tiempo_estimado_horas")
     private Double tiempoEstimadoHoras;
+
+    @Column(name = "fecha_estimada_despacho")
+    @NotNull(message = "La fecha estimada de despacho es obligatoria")
+    private LocalDate fechaEstimadaDespacho;
 
     @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

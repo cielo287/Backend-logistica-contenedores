@@ -20,4 +20,6 @@ public class TramoRutaDetalleDTO implements Serializable {
     private Double tiempoEstimado;
     private LocalDate fechaRealSalida;
     private LocalDate fechaRealLlegada;
+    private LocalDate fechaEstimadaSalida;
+    private LocalDate fechaEstimadaLlegada;
 }

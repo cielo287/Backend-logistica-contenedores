@@ -1,5 +1,6 @@
 package utn.frc.backend.tpi.logistica.dtos;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class SolicitudDto {
     private Long camionId;
     private Double costoEstimado;
     private Double tiempoEstimadoHoras;
+    private LocalDate fechaEstimadaDespacho;
     private List<TramoRutaDto> tramos; 
 
 }

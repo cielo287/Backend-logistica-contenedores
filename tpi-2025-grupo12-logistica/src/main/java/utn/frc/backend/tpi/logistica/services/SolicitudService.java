@@ -56,7 +56,10 @@ public class SolicitudService {
 
 
     public Solicitud crear(Solicitud solicitud) {
-        // Validaciones básicas de existencia camion y contenedor
+        // Validaciones básicas de existencia camion y contenedor y fecha estimada despacho
+        if(solicitud.getFechaEstimadaDespacho() == null){
+            throw new IllegalArgumentException("La solicitud debe tener una fecha estimada de despacho.");
+        }
         String contenedorUrl = baseUrl + "/contenedores/" + solicitud.getContenedorId();
         ContenedorDto contenedor = restTemplate.getForObject(contenedorUrl, ContenedorDto.class);
         if (contenedor == null)

@@ -50,4 +50,10 @@ public class TramoRuta {
     @Column(name = "fecha_real_llegada")
     private LocalDate fechaRealLlegada;
 
+    @Column(name = "fecha_estimada_salida")
+    private LocalDate fechaEstimadaSalida;
+
+    @Column(name = "fecha_estimada_llegada")
+    private LocalDate fechaEstimadaLlegada;
+
 }
