@@ -19,7 +19,6 @@ public class ContenedorDTO implements Serializable {
     private EstadoDTO estado;
     //private Long estadoId;
 
-    
 
     public ContenedorDTO(Contenedor contenedor) {
         this.id = contenedor.getId();

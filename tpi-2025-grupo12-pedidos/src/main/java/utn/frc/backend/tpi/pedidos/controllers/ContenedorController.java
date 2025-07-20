@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import utn.frc.backend.tpi.pedidos.dto.ContenedorDTO;
 import utn.frc.backend.tpi.pedidos.dto.ContenedorPendienteDTO;
+import utn.frc.backend.tpi.pedidos.dto.ContenedorRequestDTO;
 import utn.frc.backend.tpi.pedidos.dto.EstadoSimpleDto;
 import utn.frc.backend.tpi.pedidos.mapper.ContenedorMapper;
 import utn.frc.backend.tpi.pedidos.models.Contenedor;
@@ -43,12 +44,11 @@ public class ContenedorController {
     }
 
     @PostMapping
-    public ContenedorDTO crear(@RequestBody ContenedorDTO contenedorDTO) {
-        Contenedor contenedor = contenedorMapper.toEntity(contenedorDTO);
-        Contenedor guardado = contenedorService.crear(contenedor);
-        return contenedorMapper.toDTO(guardado);
-        
+    public ContenedorDTO crear(@RequestBody ContenedorRequestDTO request) {
+        Contenedor creado = contenedorService.crearDesdeDto(request);
+        return contenedorMapper.toDTO(creado);
     }
+
 
     @PutMapping("/{id}")
     public ContenedorDTO actualizar(@PathVariable Long id, @RequestBody ContenedorDTO contenedorDTO){
