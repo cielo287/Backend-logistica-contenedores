@@ -20,6 +20,8 @@ import utn.frc.backend.tpi.pedidos.repositories.ClienteRepository;
 import utn.frc.backend.tpi.pedidos.repositories.ContenedorRepository;
 import utn.frc.backend.tpi.pedidos.repositories.EstadoRepository;
 import utn.frc.backend.tpi.pedidos.repositories.HistorialEstadoRepository;
+import utn.frc.backend.tpi.pedidos.state.EstadoContenedor;
+import utn.frc.backend.tpi.pedidos.state.EstadoFactory;
 
 @Service
 public class ContenedorService {
@@ -117,29 +119,54 @@ public class ContenedorService {
 
     // METODO PARA ACTUALIZAR EL ESTADO DEL CONTENEDOR Y GUARDAR EN HISTORIAL
     public Contenedor actualizarEstado(Long contenedorId, Long estadoId) {
-        Contenedor contenedor = obtenerPorId(contenedorId);
+    Contenedor contenedor = obtenerPorId(contenedorId);
 
-        Estado estado = estadoRepo.findById(estadoId)
-            .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+    Estado nuevoEstado = estadoRepo.findById(estadoId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estado no encontrado"));
 
-        contenedor.setEstado(estado);
-        contenedorRepo.save(contenedor);
+    String nombreActual = contenedor.getEstado().getNombre();
+    String nombreNuevo = nuevoEstado.getNombre();
 
-        HistorialEstado historial = new HistorialEstado();
-        historial.setContenedor(contenedor);
-        historial.setEstado(estado);
-        historial.setFechaCambio(LocalDate.now());
-        historialEstadoRepo.save(historial);
-        
-        //Notificar a Logistica que se hizo un cambio de estado
-        restTemplate.postForEntity(
-        "http://localhost:8082/api/logistica/tramos-ruta/observer/estado",
-        new NotificarCambioEstadoDto(contenedorId, estado.getId(), historial.getFechaCambio()),
-        Void.class);
+    EstadoContenedor estadoActual = EstadoFactory.obtenerEstado(nombreActual);
 
-
-        return contenedor;
+    // Validar transición
+    if (!estadoActual.puedeTransicionarA(nombreNuevo)) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "No se puede pasar de '" + estadoActual.getNombre() + "' a '" + nombreNuevo + "'");
     }
+
+    // Validar que no se repita un estado en el historial
+    boolean yaTieneEsteEstado = historialEstadoRepo.findByContenedorIdOrderByFechaCambioAsc(contenedorId)
+        .stream()
+        .anyMatch(reg -> reg.getEstado().getId().equals(estadoId));
+
+    if (yaTieneEsteEstado) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "El contenedor ya pasó por el estado '" + nombreNuevo + "', no se puede repetir.");
+    }
+
+    // Ejecutar lógica del estado OPCIONAL
+    estadoActual.ejecutarAccion(contenedor);
+
+    contenedor.setEstado(nuevoEstado);
+    contenedorRepo.save(contenedor);
+
+    HistorialEstado historial = new HistorialEstado();
+    historial.setContenedor(contenedor);
+    historial.setEstado(nuevoEstado);
+    historial.setFechaCambio(LocalDate.now());
+    historialEstadoRepo.save(historial);
+    
+    // Notificar a Logística
+    restTemplate.postForEntity(
+        "http://localhost:8082/api/logistica/tramos-ruta/observer/estado",
+        new NotificarCambioEstadoDto(contenedorId, nuevoEstado.getId(), historial.getFechaCambio()),
+        Void.class
+    );
+
+    return contenedor;
+}
+
 
     //METODO PARA ACCEDER AL HISTORIAL
     public List<EstadoSimpleDto> obtenerHistorialSimplificado(Long contenedorId) {
