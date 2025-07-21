@@ -2,7 +2,6 @@ package utn.frc.backend.tpi.logistica.services;
 
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +9,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import utn.frc.backend.tpi.logistica.dtos.ContenedorDto;
 import utn.frc.backend.tpi.logistica.dtos.HistorialEstadoDto;
 import utn.frc.backend.tpi.logistica.dtos.TramoRutaDto;
 import utn.frc.backend.tpi.logistica.models.Solicitud;
@@ -32,9 +25,6 @@ public class TramoRutaService {
 
     @Autowired
     private GeoService geoService;
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Autowired
     private SolicitudRepository solicitudRepository;
@@ -137,9 +127,8 @@ public class TramoRutaService {
 
     }
 
-    public Long diferenciaEntreEstimadoReal(LocalDate estimado, LocalDate real) {
-        long dias = ChronoUnit.DAYS.between(estimado, real);  
-        return dias;
+    public long diferenciaEntreEstimadoReal(LocalDate estimado, LocalDate real) {
+         return ChronoUnit.DAYS.between(estimado, real);   
    
     }
 
@@ -181,8 +170,10 @@ public class TramoRutaService {
         else if (estadoId == 4) {
         TramoRuta tramoFinal = tramos.size() == 2 ? tramos.get(1) : tramos.get(0);
         tramoFinal.setFechaRealLlegada(fecha);
+        solicitud.setEsFinalizada(true);
         }
         solicitudRepository.save(solicitud);
+        tramoRutaRepo.saveAll(tramos);
 
     }
 

@@ -68,4 +68,10 @@ public class SolicitudController {
         return solicitudService.obtenerEstadoSolicitud(solicitudId, clienteId);
     }
 
+    @GetMapping("/informe-desempeno")
+    public ResponseEntity<String> obtenerInformeDesempeno() {
+        String informe = solicitudService.informeDesempeño();
+        return ResponseEntity.ok(informe);
+    }
+
 }

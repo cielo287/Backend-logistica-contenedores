@@ -1,6 +1,7 @@
 package utn.frc.backend.tpi.logistica.services;
 
 
+import java.io.Console;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +130,45 @@ public class SolicitudService {
                 contenedor.getEstado().getNombre());
     }
 
-    public Float desempeño() {
-        return null;
+    public String informeDesempeño() {
+    List<Solicitud> solicitudesFinalizadas = solicitudRepo.findByEsFinalizadaTrue();
+
+    if (solicitudesFinalizadas.isEmpty()) {
+        return "No hay solicitudes finalizadas para evaluar el desempeño del servicio.";
     }
+
+    int adelantado = 0;
+    int aTiempo = 0;
+    int atrasado = 0;
+    int totalTramos = 0;
+
+    for (Solicitud solicitud : solicitudesFinalizadas) {
+        List<TramoRuta> tramos = solicitud.getTramos();
+        totalTramos += tramos.size();
+
+        for (TramoRuta tramo : tramos) {
+            long diferencia = tramoRutaService.diferenciaEntreEstimadoReal(
+                tramo.getFechaEstimadaLlegada(), tramo.getFechaRealLlegada()
+            );
+            
+
+            if (diferencia < 0) {
+                adelantado++;
+            } else if (diferencia == 0) {
+                aTiempo++;
+            } else {
+                atrasado++;
+            }
+        }
+    }
+
+    double desempeñoGeneral = ((adelantado + aTiempo - atrasado) / (double) totalTramos) * 100;
+    desempeñoGeneral = Math.max(0, desempeñoGeneral);
+
+    return String.format(
+    "El servicio presenta un total de %d tramos cumplidos antes de lo previsto.\n" +
+    "Un total de %d tramos fueron cumplidos a tiempo y %d tramos presentaron demoras.\n" +
+    "El desempeño general del servicio es de %.2f%%.",adelantado, aTiempo, atrasado, desempeñoGeneral
+    );
+}
 }

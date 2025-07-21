@@ -54,6 +54,10 @@ public class Solicitud {
     @NotNull(message = "La fecha estimada de despacho es obligatoria")
     private LocalDate fechaEstimadaDespacho;
 
+    @Column(name = "es_finalizada", nullable = false)
+    private boolean esFinalizada = false;
+
+
     @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<TramoRuta> tramos;
