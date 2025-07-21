@@ -79,26 +79,12 @@ public class ContenedorService {
         Cliente cliente = clienteRepo.findById(clienteId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cliente no encontrado"));
 
-<<<<<<< HEAD
-        /* 
-        Long estadoId = contenedor.getEstado().getId();
-        Estado estado = estadoRepo.findById(estadoId)
-        .orElseThrow(() -> new RuntimeException("Estado no encontrado"));*/
-        
-        //Cerar el contenedor directamenete en Pendiente de despacho
-
         Estado estado = estadoRepo.findById(5L).
         orElseThrow(() -> new RuntimeException());
-        
-        
-=======
-        Estado estado = estadoRepo.findById(estadoId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estado no encontrado"));
 
         Contenedor contenedor = new Contenedor();
         contenedor.setPeso(peso);
         contenedor.setVolumen(volumen);
->>>>>>> 3e5495e158a93448dfd813ba0c6659e95e5cce0c
         contenedor.setCliente(cliente);
         contenedor.setEstado(estado);
 
