@@ -2,15 +2,26 @@ package utn.frc.backend.tpi.logistica.services;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import utn.frc.backend.tpi.logistica.dtos.ContenedorDto;
+import utn.frc.backend.tpi.logistica.dtos.HistorialEstadoDto;
 import utn.frc.backend.tpi.logistica.dtos.TramoRutaDto;
 import utn.frc.backend.tpi.logistica.models.Solicitud;
 import utn.frc.backend.tpi.logistica.models.TramoRuta;
+import utn.frc.backend.tpi.logistica.repositories.SolicitudRepository;
 import utn.frc.backend.tpi.logistica.repositories.TramoRutaRepository;
 
 @Service
@@ -22,8 +33,16 @@ public class TramoRutaService {
     @Autowired
     private GeoService geoService;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private SolicitudRepository solicitudRepository;
+    
+
     @Value("${servicio.pedidos.url:http://localhost:8082/api/pedidos}")
     private String baseUrl;
+    
 
     public List<TramoRuta> obtenerTodos() {
         return tramoRutaRepo.findAll();
@@ -123,8 +142,52 @@ public class TramoRutaService {
         return dias;
    
     }
-    
+
+    public void actualizarFechasPorCambioEstado(HistorialEstadoDto dto){
+
+        Long contenedorId = dto.getContenedorId();
+        Long estadoId = dto.getEstadoId();
+        LocalDate fecha = dto.getFechaCambio();
+        System.out.println("ContenedorId: " + contenedorId);
+        System.out.println("EstadoId: " + estadoId);
+        System.out.println("FechaCambio: " + fecha);
+
+
+        Optional<Solicitud> solicitudOp = solicitudRepository.findByContenedorId(contenedorId);
+        if(solicitudOp.isEmpty()) return;
+
+        Solicitud solicitud = solicitudOp.get();
+        List <TramoRuta> tramos = solicitud.getTramos();
+        
+        //Estado: Retirado de origen
+        
+        if (estadoId == 1){
+            tramos.get(0).setFechaRealSalida(fecha);
+            
+        }
+        
+        //Entregado en deposito
+        else if (estadoId == 2) {
+            tramos.get(0).setFechaRealLlegada(fecha);
+        }
+        
+        //Retirado de deposito
+
+        else if (estadoId == 3) {
+            tramos.get(1).setFechaRealSalida(fecha);
+        }
+
+        //EntragadoEnDestino
+        else if (estadoId == 4) {
+        TramoRuta tramoFinal = tramos.size() == 2 ? tramos.get(1) : tramos.get(0);
+        tramoFinal.setFechaRealLlegada(fecha);
+        }
+        solicitudRepository.save(solicitud);
+
+    }
+
+
+        
 
     
-
 }

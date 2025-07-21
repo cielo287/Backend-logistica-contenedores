@@ -6,9 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import utn.frc.backend.tpi.pedidos.dto.EstadoSimpleDto;
+import utn.frc.backend.tpi.pedidos.dto.NotificarCambioEstadoDto;
 import utn.frc.backend.tpi.pedidos.models.Cliente;
 import utn.frc.backend.tpi.pedidos.models.Contenedor;
 import utn.frc.backend.tpi.pedidos.models.Estado;
@@ -33,6 +35,9 @@ public class ContenedorService {
     @Autowired
     private HistorialEstadoRepository historialEstadoRepo;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     public static final String ESTADO_FINAL = "Entregado en destino";
 
 
@@ -53,10 +58,16 @@ public class ContenedorService {
         Cliente cliente = clienteRepo.findById(clienteId)
         .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        //Buscar estado existente
+        /* 
         Long estadoId = contenedor.getEstado().getId();
         Estado estado = estadoRepo.findById(estadoId)
-        .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+        .orElseThrow(() -> new RuntimeException("Estado no encontrado"));*/
+        
+        //Cerar el contenedor directamenete en Pendiente de despacho
+
+        Estado estado = estadoRepo.findById(5L).
+        orElseThrow(() -> new RuntimeException());
+        
         
         contenedor.setCliente(cliente);
         contenedor.setEstado(estado);
@@ -97,6 +108,13 @@ public class ContenedorService {
         historial.setEstado(estado);
         historial.setFechaCambio(LocalDate.now());
         historialEstadoRepo.save(historial);
+        
+        //Notificar a Logistica que se hizo un cambio de estado
+        restTemplate.postForEntity(
+        "http://localhost:8082/api/logistica/tramos-ruta/observer/estado",
+        new NotificarCambioEstadoDto(contenedorId, estado.getId(), historial.getFechaCambio()),
+        Void.class);
+
 
         return contenedor;
     }

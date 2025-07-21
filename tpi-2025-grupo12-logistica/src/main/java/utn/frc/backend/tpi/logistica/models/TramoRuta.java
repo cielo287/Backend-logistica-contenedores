@@ -56,4 +56,5 @@ public class TramoRuta {
     @Column(name = "fecha_estimada_llegada")
     private LocalDate fechaEstimadaLlegada;
 
+
 }

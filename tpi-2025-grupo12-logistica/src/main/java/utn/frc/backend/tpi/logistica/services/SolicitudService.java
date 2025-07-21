@@ -128,4 +128,8 @@ public class SolicitudService {
                 contenedor.getClienteId(),
                 contenedor.getEstado().getNombre());
     }
+
+    public Float desempeño() {
+        return null;
+    }
 }

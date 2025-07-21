@@ -1,11 +1,13 @@
 package utn.frc.backend.tpi.logistica.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import utn.frc.backend.tpi.logistica.dtos.HistorialEstadoDto;
 import utn.frc.backend.tpi.logistica.dtos.TramoRutaDetalleDTO;
 import utn.frc.backend.tpi.logistica.dtos.TramoRutaDto;
 import utn.frc.backend.tpi.logistica.mappers.TramoRutaDetalleMapper;
@@ -46,6 +48,16 @@ public class TramoRutaController {
         TramoRuta tramo = tramoRutaMapper.toEntity(dto);
         TramoRuta creado = tramoRutaService.crear(tramo);
         return ResponseEntity.ok(tramoRutaMapper.toDto(creado));
+    }
+
+    @PostMapping("/observer/estado")
+    public ResponseEntity<Void> recibirCambioEstado(@RequestBody HistorialEstadoDto dto){
+        System.out.println("🚚 Se recibió cambio de estado: " + dto);
+        System.out.println("ContenedorrrrId: " + dto.getContenedorId());
+        System.out.println("EstadooooId: " + dto.getEstadoId());
+        System.out.println("FechaCambiooooo: " + dto.getFechaCambio());
+        tramoRutaService.actualizarFechasPorCambioEstado(dto);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")

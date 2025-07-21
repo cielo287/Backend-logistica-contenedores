@@ -32,7 +32,8 @@ INSERT INTO estado (nombre) VALUES
   ('Retirado de origen'),
   ('Entregado en depósito'),
   ('Retirado de depósito'),
-  ('Entregado en destino');
+  ('Entregado en destino'),
+  ('Pendiente de despacho');
 
 -- ====================
 -- CONTENEDORES
