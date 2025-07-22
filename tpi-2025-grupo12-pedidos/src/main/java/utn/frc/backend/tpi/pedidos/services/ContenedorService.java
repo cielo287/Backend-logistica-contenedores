@@ -162,12 +162,13 @@ public class ContenedorService {
 
 
         // VALIDAR SI TIENE DEPOSITO
-        
+        /* 
         boolean tieneDeposito = contenedorTieneDeposito(contenedorId);
         if (!estadoActual.puedeAplicarse(nombreNuevo, tieneDeposito)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
             "No se puede aplicar el estado '" + nombreNuevo + "' porque no hay depósito en la solicitud");
         }
+            */
 
 
         // Ejecutar lógica del estado OPCIONAL

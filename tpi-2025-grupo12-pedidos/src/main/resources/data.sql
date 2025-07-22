@@ -46,7 +46,9 @@ INSERT INTO contenedor (peso, volumen, estado_id, cliente_id) VALUES
   (900.0, 200000, 1, 2),-----mucho volumen
   (1000000, 400, 1, 1),-----mucho peso
   (1300.0, 9.0, 4, 1), -- Entregado en destino
-  (950.0, 6.8, 4, 2); -- Entregado en destino
+  (950.0, 6.8, 4, 2), -- Entregado en destino
+  (620.0, 4.0, 5, 1);
+
 
 -- ====================
 -- DEPÓSITOS

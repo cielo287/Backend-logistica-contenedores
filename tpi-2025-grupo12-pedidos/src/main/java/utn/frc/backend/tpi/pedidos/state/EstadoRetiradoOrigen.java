@@ -7,7 +7,7 @@ public class EstadoRetiradoOrigen implements EstadoContenedor{
 
     @Override
     public String getNombre(){
-        return "Pendiente de despacho";
+        return "Retirado de origen";   
     }
 
     @Override
