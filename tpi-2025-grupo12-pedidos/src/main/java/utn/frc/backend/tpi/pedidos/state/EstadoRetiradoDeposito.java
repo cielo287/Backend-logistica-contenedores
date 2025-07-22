@@ -12,14 +12,15 @@ public class EstadoRetiradoDeposito implements EstadoContenedor{
     }
 
     @Override
-    public boolean puedeTransicionarA(String nuevoEstado) {
+    public boolean puedeTransicionarA(String nuevoEstado, boolean tieneDeposito) {
+        if ((nuevoEstado.equals("Entregado en depósito") || nuevoEstado.equals("Retirado de depósito")) && !tieneDeposito) {
+            return false;
+        }
         return transicionesValidas.contains(nuevoEstado);
     }
 
     @Override
-    public void ejecutarAccion(Contenedor contenedor) {
-        // Lógica personalizada si se quiere
-    }
+    public void ejecutarAccion(Contenedor contenedor) {}
 
     @Override
     public boolean puedeAplicarse(String nuevoEstado, boolean tieneDeposito) {

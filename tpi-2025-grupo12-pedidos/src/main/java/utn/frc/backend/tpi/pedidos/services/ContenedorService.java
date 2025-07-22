@@ -1,7 +1,6 @@
 package utn.frc.backend.tpi.pedidos.services;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,9 +144,13 @@ public class ContenedorService {
         EstadoContenedor estadoActual = EstadoFactory.obtenerEstado(nombreActual);
 
         // Validar transición
-        if (!estadoActual.puedeTransicionarA(nombreNuevo)) {
+        // Consultar si tiene depósito
+        boolean tieneDeposito = contenedorTieneDeposito(contenedorId);
+
+        // Validar transición con depósito
+        if (!estadoActual.puedeTransicionarA(nombreNuevo, tieneDeposito)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "No se puede pasar de '" + estadoActual.getNombre() + "' a '" + nombreNuevo + "'");
+                "No se puede pasar de '" + estadoActual.getNombre() + "' a '" + nombreNuevo + "' en este contexto.");
         }
 
         // Validar que no se repita un estado en el historial
@@ -159,16 +162,6 @@ public class ContenedorService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "El contenedor ya pasó por el estado '" + nombreNuevo + "', no se puede repetir.");
         }
-
-
-        // VALIDAR SI TIENE DEPOSITO
-        /* 
-        boolean tieneDeposito = contenedorTieneDeposito(contenedorId);
-        if (!estadoActual.puedeAplicarse(nombreNuevo, tieneDeposito)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-            "No se puede aplicar el estado '" + nombreNuevo + "' porque no hay depósito en la solicitud");
-        }
-            */
 
 
         // Ejecutar lógica del estado OPCIONAL
