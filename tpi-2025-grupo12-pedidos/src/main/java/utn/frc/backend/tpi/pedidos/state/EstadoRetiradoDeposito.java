@@ -20,4 +20,10 @@ public class EstadoRetiradoDeposito implements EstadoContenedor{
     public void ejecutarAccion(Contenedor contenedor) {
         // Lógica personalizada si se quiere
     }
+
+    @Override
+    public boolean puedeAplicarse(String nuevoEstado, boolean tieneDeposito) {
+        return tieneDeposito || !nuevoEstado.equals("Retirado de depósito");
+    }
+
 }

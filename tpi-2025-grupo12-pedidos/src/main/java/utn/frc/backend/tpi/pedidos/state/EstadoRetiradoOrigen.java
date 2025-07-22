@@ -19,4 +19,10 @@ public class EstadoRetiradoOrigen implements EstadoContenedor{
     public void ejecutarAccion(Contenedor contenedor){
 
     }
+
+    @Override
+    public boolean puedeAplicarse(String nuevoEstado, boolean tieneDeposito) {
+        return true;
+    }
+
 }

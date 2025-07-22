@@ -20,4 +20,10 @@ public class EstadoEntregadoDeposito implements EstadoContenedor {
         // Opcional: notificar al sistema de inventario
     }
 
+    @Override
+    public boolean puedeAplicarse(String nuevoEstado, boolean tieneDeposito) {
+        return tieneDeposito || !nuevoEstado.equals("Entregado en depósito");
+    }
+
+
 }

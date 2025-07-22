@@ -18,4 +18,10 @@ public class EstadoEntregadoDestino implements EstadoContenedor {
     public void ejecutarAccion(Contenedor contenedor) {
         // Cierre automático de pedido, notificar cliente, etc.
     }
+
+    @Override
+    public boolean puedeAplicarse(String nuevoEstado, boolean tieneDeposito) {
+        return true;
+    }
+
 }

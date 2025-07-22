@@ -1,6 +1,7 @@
 package utn.frc.backend.tpi.pedidos.services;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
-
 import utn.frc.backend.tpi.pedidos.dto.ContenedorRequestDTO;
 import utn.frc.backend.tpi.pedidos.dto.EstadoSimpleDto;
 import utn.frc.backend.tpi.pedidos.dto.NotificarCambioEstadoDto;
@@ -117,55 +117,80 @@ public class ContenedorService {
         return contenedorRepo.findByEstadoNombreNot(ESTADO_FINAL);
     }
 
+    // METODO PARA VALIDAR SI EL CONTENEDOR TIENE DEPOSITO
+    
+    private boolean contenedorTieneDeposito(Long contenedorId) {
+    try {
+        return restTemplate.getForObject(
+            "http://localhost:8082/api/logistica/solicitudes/contenedor/" + contenedorId + "/tiene-deposito",
+            Boolean.class
+        );
+    } catch (Exception e) {
+        throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "No se pudo consultar si el contenedor tiene depósito.");
+    }
+    }
+
+    
     // METODO PARA ACTUALIZAR EL ESTADO DEL CONTENEDOR Y GUARDAR EN HISTORIAL
     public Contenedor actualizarEstado(Long contenedorId, Long estadoId) {
-    Contenedor contenedor = obtenerPorId(contenedorId);
 
-    Estado nuevoEstado = estadoRepo.findById(estadoId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estado no encontrado"));
+        Contenedor contenedor = obtenerPorId(contenedorId);
 
-    String nombreActual = contenedor.getEstado().getNombre();
-    String nombreNuevo = nuevoEstado.getNombre();
+        Estado nuevoEstado = estadoRepo.findById(estadoId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estado no encontrado"));
 
-    EstadoContenedor estadoActual = EstadoFactory.obtenerEstado(nombreActual);
+        String nombreActual = contenedor.getEstado().getNombre();
+        String nombreNuevo = nuevoEstado.getNombre();
 
-    // Validar transición
-    if (!estadoActual.puedeTransicionarA(nombreNuevo)) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-            "No se puede pasar de '" + estadoActual.getNombre() + "' a '" + nombreNuevo + "'");
-    }
+        EstadoContenedor estadoActual = EstadoFactory.obtenerEstado(nombreActual);
 
-    // Validar que no se repita un estado en el historial
-    boolean yaTieneEsteEstado = historialEstadoRepo.findByContenedorIdOrderByFechaCambioAsc(contenedorId)
-        .stream()
-        .anyMatch(reg -> reg.getEstado().getId().equals(estadoId));
+        // Validar transición
+        if (!estadoActual.puedeTransicionarA(nombreNuevo)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "No se puede pasar de '" + estadoActual.getNombre() + "' a '" + nombreNuevo + "'");
+        }
 
-    if (yaTieneEsteEstado) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-            "El contenedor ya pasó por el estado '" + nombreNuevo + "', no se puede repetir.");
-    }
+        // Validar que no se repita un estado en el historial
+        boolean yaTieneEsteEstado = historialEstadoRepo.findByContenedorIdOrderByFechaCambioAsc(contenedorId)
+            .stream()
+            .anyMatch(reg -> reg.getEstado().getId().equals(estadoId));
 
-    // Ejecutar lógica del estado OPCIONAL
-    estadoActual.ejecutarAccion(contenedor);
+        if (yaTieneEsteEstado) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "El contenedor ya pasó por el estado '" + nombreNuevo + "', no se puede repetir.");
+        }
 
-    contenedor.setEstado(nuevoEstado);
-    contenedorRepo.save(contenedor);
 
-    HistorialEstado historial = new HistorialEstado();
-    historial.setContenedor(contenedor);
-    historial.setEstado(nuevoEstado);
-    historial.setFechaCambio(LocalDate.now());
-    historialEstadoRepo.save(historial);
-    
-    // Notificar a Logística
-    restTemplate.postForEntity(
-        "http://localhost:8082/api/logistica/tramos-ruta/observer/estado",
-        new NotificarCambioEstadoDto(contenedorId, nuevoEstado.getId(), historial.getFechaCambio()),
-        Void.class
-    );
+        // VALIDAR SI TIENE DEPOSITO
+        
+        boolean tieneDeposito = contenedorTieneDeposito(contenedorId);
+        if (!estadoActual.puedeAplicarse(nombreNuevo, tieneDeposito)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "No se puede aplicar el estado '" + nombreNuevo + "' porque no hay depósito en la solicitud");
+        }
+
+
+        // Ejecutar lógica del estado OPCIONAL
+        estadoActual.ejecutarAccion(contenedor);
+
+        contenedor.setEstado(nuevoEstado);
+        contenedorRepo.save(contenedor);
+
+        HistorialEstado historial = new HistorialEstado();
+        historial.setContenedor(contenedor);
+        historial.setEstado(nuevoEstado);
+        historial.setFechaCambio(LocalDate.now());
+        historialEstadoRepo.save(historial);
+        
+        // Notificar a Logística
+        restTemplate.postForEntity(
+            "http://localhost:8082/api/logistica/tramos-ruta/observer/estado",
+            new NotificarCambioEstadoDto(contenedorId, nuevoEstado.getId(), historial.getFechaCambio()),
+            Void.class
+        );
 
     return contenedor;
-}
+    }
 
 
     //METODO PARA ACCEDER AL HISTORIAL

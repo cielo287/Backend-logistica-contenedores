@@ -21,4 +21,10 @@ public class EstadoPendiente implements EstadoContenedor{
 
     }
 
+    @Override
+    public boolean puedeAplicarse(String nuevoEstado, boolean tieneDeposito) {
+        return true;
+    }
+
+
 }
