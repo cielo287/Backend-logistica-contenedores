@@ -74,4 +74,12 @@ public class SolicitudController {
         return ResponseEntity.ok(informe);
     }
 
+    // CONTROLADOR PARA VERIFICAR SI EL CONTENEDOR RECORRE ALGUN DEPOSITO
+    @GetMapping("/solicitudes/contenedor/{id}/tiene-deposito")
+    public ResponseEntity<Boolean> tieneDeposito(@PathVariable Long id) {
+        boolean tiene = solicitudService.tieneDepositoAsignado(id);
+        return ResponseEntity.ok(tiene);
+    }
+
+
 }

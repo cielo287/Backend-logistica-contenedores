@@ -171,4 +171,13 @@ public class SolicitudService {
     "El desempeño general del servicio es de %.2f%%.",adelantado, aTiempo, atrasado, desempeñoGeneral
     );
 }
+
+    public boolean tieneDepositoAsignado(Long contenedorId) {
+    Solicitud solicitud = solicitudRepo.findByContenedorId(contenedorId)
+        .orElseThrow(() -> new RuntimeException("Solicitud no encontrada para el contenedor"));
+    
+    return solicitud.getDepositoId() != null;
+}
+
+
 }
