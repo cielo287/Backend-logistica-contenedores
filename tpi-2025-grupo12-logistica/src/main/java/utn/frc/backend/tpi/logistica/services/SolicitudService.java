@@ -1,7 +1,7 @@
 package utn.frc.backend.tpi.logistica.services;
 
-import java.io.Console;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,21 +66,27 @@ public class SolicitudService {
         if (contenedor == null)
             throw new RuntimeException("Contenedor no encontrado");
 
-        // 2. Obtener camión
+        // 2. Validar que el contenedor no esté ya asignado a otra solicitud
+        Optional<Solicitud> existente = solicitudRepo.findByContenedorId(solicitud.getContenedorId());
+        if (existente.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El contenedor ya está asignado a otra solicitud.");
+        }
+
+        // 3. Obtener camión
         String camionUrl = baseUrl + "/camiones/" + solicitud.getCamionId();
         CamionDto camion = restTemplate.getForObject(camionUrl, CamionDto.class);
         if (camion == null)
             throw new RuntimeException("Camión no encontrado");
 
-        // 3. Validar disponibilidad
+        // 4. Validar disponibilidad del camión
         if (!camion.isDisponibilidad()) {
             throw new RuntimeException("El camión no está disponible");
         }
 
-        // 4. Validar pesos
+        // 5. Validar pesos
         validarPesos(contenedor, camion);
 
-        // 5. Generar tramos
+        // 6. Generar tramos
         List<TramoRuta> tramos = tramoRutaService.generarTramos(solicitud);
         if (tramos == null || tramos.isEmpty()) {
             throw new RuntimeException("No se pudieron generar tramos de ruta.");
@@ -88,7 +94,7 @@ public class SolicitudService {
 
         solicitud.setTramos(tramos);
 
-        // 6. Calcular costos y tiempos
+        // 7. Calcular costos y tiempos
         double costo = tarifaService.calcularTarifaSolicitud(solicitud);
         solicitud.setCostoEstimado(costo);
 
@@ -96,12 +102,12 @@ public class SolicitudService {
                 .mapToDouble(TramoRuta::getTiempoEstimado).sum();
         solicitud.setTiempoEstimadoHoras(tiempoTotal);
 
-        // 7. Marcar camión como no disponible
+        // 8. Marcar camión como no disponible
         camion.setDisponibilidad(false);
         String actualizarCamionUrl = baseUrl + "/camiones/" + camion.getId();
         restTemplate.put(actualizarCamionUrl, camion);
 
-        // 8. Guardar solicitud
+        // 9. Guardar solicitud
         return solicitudRepo.save(solicitud);
     }
 
