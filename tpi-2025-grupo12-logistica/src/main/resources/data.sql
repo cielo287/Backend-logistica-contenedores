@@ -21,7 +21,9 @@ INSERT INTO solicitud (contenedor_id, ciudad_origen_id, ciudad_destino_id, depos
 INSERT INTO tramo_ruta (
     solicitud_id,
     ubicacion_origen_id,
+    origen_tipo,
     ubicacion_destino_id,
+    destino_tipo,
     orden,
     fecha_estimada_salida,
     fecha_real_salida,
@@ -30,19 +32,22 @@ INSERT INTO tramo_ruta (
     distancia,
     tiempo_estimado
 ) VALUES
-  (1, 1, 2, 1,'2025-07-02','2025-07-03', '2025-07-01', '2025-07-02', NULL, NULL),
-  (1, 2, 3, 2, '2025-07-03', '2025-07-04',NULL,NULL, NULL, NULL),
-  (2, 2, 3, 1, '2025-07-05', '2025-07-06', NULL,NULL,NULL, NULL),
-  (2, 3, 4, 2, '2025-07-07', '2025-07-08',NULL,NULL, NULL, NULL),
-  -- Tramos para solicitud 3
-  (3, 1, 2, 1, '2025-07-09', '2025-07-09', '2025-07-10', '2025-07-10', NULL, NULL),
-  (3, 2, 3, 2, '2025-07-11', '2025-07-11', '2025-07-12', '2025-07-12', NULL, NULL),
+  -- Solicitud 1: Tramos con tipos definidos
+  (1, 1, 'CIUDAD', 2, 'DEPOSITO', 1, '2025-07-02', '2025-07-03', '2025-07-01', '2025-07-02', NULL, NULL),
+  (1, 2, 'DEPOSITO', 3, 'CIUDAD', 2, '2025-07-03', '2025-07-04', NULL, NULL, NULL, NULL),
+  
+  -- Solicitud 2: Tramos con tipos definidos
+  (2, 2, 'CIUDAD', 3, 'DEPOSITO', 1, '2025-07-05', '2025-07-06', NULL, NULL, NULL, NULL),
+  (2, 3, 'DEPOSITO', 4, 'CIUDAD', 2, '2025-07-07', '2025-07-08', NULL, NULL, NULL, NULL),
+  
+  -- Solicitud 3: Tramos con tipos definidos
+  (3, 1, 'CIUDAD', 2, 'DEPOSITO', 1, '2025-07-09', '2025-07-09', '2025-07-10', '2025-07-10', NULL, NULL),
+  (3, 2, 'DEPOSITO', 3, 'CIUDAD', 2, '2025-07-11', '2025-07-11', '2025-07-12', '2025-07-12', NULL, NULL),
 
--- Tramos para solicitud 4
-  (4, 3, 4, 1, '2025-07-09', '2025-07-09', '2025-07-10', '2025-07-10', NULL, NULL),
-  (4, 4, 5, 2, '2025-07-09', '2025-07-09', '2025-07-10', '2025-07-11', NULL, NULL),
+  -- Solicitud 4: Tramos con tipos definidos
+  (4, 3, 'CIUDAD', 4, 'DEPOSITO', 1, '2025-07-09', '2025-07-09', '2025-07-10', '2025-07-10', NULL, NULL),
+  (4, 4, 'DEPOSITO', 5, 'CIUDAD', 2, '2025-07-09', '2025-07-09', '2025-07-10', '2025-07-11', NULL, NULL),
 
--- Tramos para solicitud 5
-  (5, 1, 2, 1, '2025-07-09', '2025-07-09', '2025-07-10', '2025-07-09', NULL, NULL),
-  (5, 2, 3, 2, '2025-07-09', '2025-07-09', '2025-07-10', '2025-07-10', NULL, NULL);
-
+  -- Solicitud 5: Tramos con tipos definidos
+  (5, 1, 'CIUDAD', 2, 'DEPOSITO', 1, '2025-07-09', '2025-07-09', '2025-07-10', '2025-07-09', NULL, NULL),
+  (5, 2, 'DEPOSITO', 3, 'CIUDAD', 2, '2025-07-09', '2025-07-09', '2025-07-10', '2025-07-10', NULL, NULL);

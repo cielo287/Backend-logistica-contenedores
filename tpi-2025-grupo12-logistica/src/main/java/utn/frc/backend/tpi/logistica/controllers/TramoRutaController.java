@@ -43,14 +43,14 @@ public class TramoRutaController {
     }
 
     @PostMapping
-    public ResponseEntity<TramoRutaDto> crear(@RequestBody TramoRutaDto dto) {
+    public ResponseEntity<TramoRutaDetalleDTO> crear(@RequestBody TramoRutaDto dto) {
         TramoRuta tramo = tramoRutaMapper.toEntity(dto);
         TramoRuta creado = tramoRutaService.crear(tramo);
-        return ResponseEntity.ok(tramoRutaMapper.toDto(creado));
+        return ResponseEntity.ok(tramoRutaDetalleMapper.toDto(creado));
     }
 
     @PostMapping("/observer/estado")
-    public ResponseEntity<Void> recibirCambioEstado(@RequestBody HistorialEstadoDto dto){
+    public ResponseEntity<Void> recibirCambioEstado(@RequestBody HistorialEstadoDto dto) {
         System.out.println("🚚 Se recibió cambio de estado: " + dto);
         System.out.println("ContenedorrrrId: " + dto.getContenedorId());
         System.out.println("EstadooooId: " + dto.getEstadoId());
@@ -60,11 +60,11 @@ public class TramoRutaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TramoRutaDto> actualizar(@PathVariable Long id, @RequestBody TramoRutaDto dto) {
+    public ResponseEntity<TramoRutaDetalleDTO> actualizar(@PathVariable Long id, @RequestBody TramoRutaDto dto) {
         TramoRuta tramo = tramoRutaMapper.toEntity(dto);
         tramo.setId(id);
         TramoRuta actualizado = tramoRutaService.actualizar(id, tramo);
-        return ResponseEntity.ok(tramoRutaMapper.toDto(actualizado));
+        return ResponseEntity.ok(tramoRutaDetalleMapper.toDto(actualizado));
     }
 
     @DeleteMapping("/{id}")

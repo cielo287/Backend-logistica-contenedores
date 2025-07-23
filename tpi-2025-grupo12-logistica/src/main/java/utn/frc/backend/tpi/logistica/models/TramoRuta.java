@@ -35,6 +35,12 @@ public class TramoRuta {
     @Column(name = "ubicacion_destino_id")
     private Long ubicacionDestinoId;
 
+    @Column(name = "origen_tipo")
+    private String origenTipo;
+
+    @Column(name = "destino_tipo")
+    private String destinoTipo;
+
     @Column(name = "orden")
     private int orden;
 
@@ -55,6 +61,5 @@ public class TramoRuta {
 
     @Column(name = "fecha_estimada_llegada")
     private LocalDate fechaEstimadaLlegada;
-
 
 }

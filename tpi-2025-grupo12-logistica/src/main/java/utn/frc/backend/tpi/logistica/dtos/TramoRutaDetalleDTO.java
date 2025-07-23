@@ -15,6 +15,8 @@ public class TramoRutaDetalleDTO implements Serializable {
     private Long solicitudId;
     private Long ubicacionOrigenId;
     private Long ubicacionDestinoId;
+    private String origenTipo;
+    private String destinoTipo;
     private int orden;
     private Double distancia;
     private Double tiempoEstimado;
