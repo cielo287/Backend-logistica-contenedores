@@ -1,6 +1,5 @@
 package utn.frc.backend.tpi.logistica.services;
 
-
 import java.io.Console;
 import java.util.List;
 
@@ -43,7 +42,8 @@ public class SolicitudService {
     public Solicitud obtenerPorId(Long id) {
 
         return solicitudRepo.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró solicitud con id " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "No se encontró solicitud con id " + id));
     }
 
     private void validarPesos(ContenedorDto contenedor, CamionDto camion) {
@@ -55,43 +55,53 @@ public class SolicitudService {
         }
     }
 
-
     public Solicitud crear(Solicitud solicitud) {
-        // Validaciones básicas de existencia camion y contenedor y fecha estimada despacho
-        if(solicitud.getFechaEstimadaDespacho() == null){
+        if (solicitud.getFechaEstimadaDespacho() == null) {
             throw new IllegalArgumentException("La solicitud debe tener una fecha estimada de despacho.");
         }
+
+        // 1. Obtener contenedor
         String contenedorUrl = baseUrl + "/contenedores/" + solicitud.getContenedorId();
         ContenedorDto contenedor = restTemplate.getForObject(contenedorUrl, ContenedorDto.class);
         if (contenedor == null)
             throw new RuntimeException("Contenedor no encontrado");
 
+        // 2. Obtener camión
         String camionUrl = baseUrl + "/camiones/" + solicitud.getCamionId();
         CamionDto camion = restTemplate.getForObject(camionUrl, CamionDto.class);
         if (camion == null)
             throw new RuntimeException("Camión no encontrado");
 
-        //Validar que el peso del contenedor no supere el del camion
+        // 3. Validar disponibilidad
+        if (!camion.isDisponibilidad()) {
+            throw new RuntimeException("El camión no está disponible");
+        }
+
+        // 4. Validar pesos
         validarPesos(contenedor, camion);
 
+        // 5. Generar tramos
         List<TramoRuta> tramos = tramoRutaService.generarTramos(solicitud);
-        
         if (tramos == null || tramos.isEmpty()) {
-        throw new RuntimeException("Error al crear solicitud: No se pudieron generar tramos de ruta.");
+            throw new RuntimeException("No se pudieron generar tramos de ruta.");
         }
 
         solicitud.setTramos(tramos);
 
-        // Calcular costo estimado usando tarifaService
+        // 6. Calcular costos y tiempos
         double costo = tarifaService.calcularTarifaSolicitud(solicitud);
         solicitud.setCostoEstimado(costo);
 
-        // Calcular tiempo estimado total (horas)
-         double tiempoTotal = tramos.stream().filter(t -> t.getTiempoEstimado() != null)
-        .mapToDouble(TramoRuta::getTiempoEstimado).sum();
+        double tiempoTotal = tramos.stream().filter(t -> t.getTiempoEstimado() != null)
+                .mapToDouble(TramoRuta::getTiempoEstimado).sum();
         solicitud.setTiempoEstimadoHoras(tiempoTotal);
 
+        // 7. Marcar camión como no disponible
+        camion.setDisponibilidad(false);
+        String actualizarCamionUrl = baseUrl + "/camiones/" + camion.getId();
+        restTemplate.put(actualizarCamionUrl, camion);
 
+        // 8. Guardar solicitud
         return solicitudRepo.save(solicitud);
     }
 
@@ -118,7 +128,7 @@ public class SolicitudService {
             throw new RuntimeException("Contenedor no encontrado");
         }
 
-        //VERIFICAR QUE EL CONTENEDOR PERTENEZCA AL CLIENTE
+        // VERIFICAR QUE EL CONTENEDOR PERTENEZCA AL CLIENTE
         if (!contenedor.getClienteId().equals(clienteId)) {
             throw new RuntimeException("El cliente no tiene acceso a esta solicitud");
         }
@@ -131,53 +141,50 @@ public class SolicitudService {
     }
 
     public String informeDesempeño() {
-    List<Solicitud> solicitudesFinalizadas = solicitudRepo.findByEsFinalizadaTrue();
+        List<Solicitud> solicitudesFinalizadas = solicitudRepo.findByEsFinalizadaTrue();
 
-    if (solicitudesFinalizadas.isEmpty()) {
-        return "No hay solicitudes finalizadas para evaluar el desempeño del servicio.";
-    }
+        if (solicitudesFinalizadas.isEmpty()) {
+            return "No hay solicitudes finalizadas para evaluar el desempeño del servicio.";
+        }
 
-    int adelantado = 0;
-    int aTiempo = 0;
-    int atrasado = 0;
-    int totalTramos = 0;
+        int adelantado = 0;
+        int aTiempo = 0;
+        int atrasado = 0;
+        int totalTramos = 0;
 
-    for (Solicitud solicitud : solicitudesFinalizadas) {
-        List<TramoRuta> tramos = solicitud.getTramos();
-        totalTramos += tramos.size();
+        for (Solicitud solicitud : solicitudesFinalizadas) {
+            List<TramoRuta> tramos = solicitud.getTramos();
+            totalTramos += tramos.size();
 
-        for (TramoRuta tramo : tramos) {
-            long diferencia = tramoRutaService.diferenciaEntreEstimadoReal(
-                tramo.getFechaEstimadaLlegada(), tramo.getFechaRealLlegada()
-            );
-            
+            for (TramoRuta tramo : tramos) {
+                long diferencia = tramoRutaService.diferenciaEntreEstimadoReal(
+                        tramo.getFechaEstimadaLlegada(), tramo.getFechaRealLlegada());
 
-            if (diferencia < 0) {
-                adelantado++;
-            } else if (diferencia == 0) {
-                aTiempo++;
-            } else {
-                atrasado++;
+                if (diferencia < 0) {
+                    adelantado++;
+                } else if (diferencia == 0) {
+                    aTiempo++;
+                } else {
+                    atrasado++;
+                }
             }
         }
+
+        double desempeñoGeneral = ((adelantado + aTiempo - atrasado) / (double) totalTramos) * 100;
+        desempeñoGeneral = Math.max(0, desempeñoGeneral);
+
+        return String.format(
+                "El servicio presenta un total de %d tramos cumplidos antes de lo previsto.\n" +
+                        "Un total de %d tramos fueron cumplidos a tiempo y %d tramos presentaron demoras.\n" +
+                        "El desempeño general del servicio es de %.2f%%.",
+                adelantado, aTiempo, atrasado, desempeñoGeneral);
     }
 
-    double desempeñoGeneral = ((adelantado + aTiempo - atrasado) / (double) totalTramos) * 100;
-    desempeñoGeneral = Math.max(0, desempeñoGeneral);
-
-    return String.format(
-    "El servicio presenta un total de %d tramos cumplidos antes de lo previsto.\n" +
-    "Un total de %d tramos fueron cumplidos a tiempo y %d tramos presentaron demoras.\n" +
-    "El desempeño general del servicio es de %.2f%%.",adelantado, aTiempo, atrasado, desempeñoGeneral
-    );
-}
-
     public boolean tieneDepositoAsignado(Long contenedorId) {
-    Solicitud solicitud = solicitudRepo.findByContenedorId(contenedorId)
-        .orElseThrow(() -> new RuntimeException("Solicitud no encontrada para el contenedor"));
-    
-    return solicitud.getDepositoId() != null;
-}
+        Solicitud solicitud = solicitudRepo.findByContenedorId(contenedorId)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada para el contenedor"));
 
+        return solicitud.getDepositoId() != null;
+    }
 
 }
