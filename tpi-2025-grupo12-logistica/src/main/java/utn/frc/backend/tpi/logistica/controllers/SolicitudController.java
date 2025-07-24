@@ -37,6 +37,14 @@ public class SolicitudController {
         return solicitudMapper.toDto(solicitud);
     }
 
+    //CONTROLADOR PARA OBTENER LAS SOLICITUDES CREADAS POR EL CLIENTE
+    @GetMapping("/pendientes-de-procesar")
+    public List<SolicitudDto> listarPendientesDeProcesar(){
+        return solicitudService.obtenerSolicitudesSinCamion().stream().map(solicitudMapper::toDto).toList();
+    }
+
+    //CONTROLADOR PARA QUE EL CLIENTE SOLICITE EL TRASLADO
+
     @PostMapping
     public ResponseEntity<?> crearPeticionTraslado(@RequestBody SolicitudPeticionTrasladoDTO solicitudPeticionTrasladoDTO){
         try {
@@ -51,21 +59,8 @@ public class SolicitudController {
         }
     }
 
-    /*@PostMapping
-    public ResponseEntity<?> crear(@RequestBody SolicitudDto solicitudDto) {
-        try {
-            Solicitud solicitud = solicitudMapper.toEntity(solicitudDto);
-            Solicitud nueva = solicitudService.crear(solicitud);
-            SolicitudDto rtaDto = solicitudMapper.toDto(nueva);
-            return ResponseEntity.status(HttpStatus.CREATED).body(rtaDto);
-   
-        } catch (Exception e) {
-            e.printStackTrace(); 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body("Error al crear solicitud: " + e.getMessage());
-        }
-    }*/
-
+    //CONTROLADOR PARA PROCESAR LAS SOLICITUDES CREADAS POR EL CLIENTE
+    
     @PutMapping("/{id}/procesar-solicitud") 
     public ResponseEntity<?> procesarSolicitd(@PathVariable Long id, @RequestBody PorcesarSolicitudDto dto) {
         try {

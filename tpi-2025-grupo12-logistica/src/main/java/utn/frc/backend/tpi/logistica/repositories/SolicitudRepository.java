@@ -19,4 +19,7 @@ Optional<Solicitud> findByContenedorId(Long contenedorId);
 
 List<Solicitud> findByEsFinalizadaTrue();
 
+List<Solicitud> findByCamionIdIsNull();
+
+
 }

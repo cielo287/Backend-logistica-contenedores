@@ -212,4 +212,8 @@ public class SolicitudService {
         return solicitud.getDepositoId() != null;
     }
 
+    public List<Solicitud> obtenerSolicitudesSinCamion() {
+        return solicitudRepo.findByCamionIdIsNull();
+    }
+
 }
