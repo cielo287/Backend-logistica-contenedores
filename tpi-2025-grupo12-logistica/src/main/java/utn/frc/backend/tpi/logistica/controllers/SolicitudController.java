@@ -8,7 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import utn.frc.backend.tpi.logistica.dtos.EstadoSolicitudDto;
+import utn.frc.backend.tpi.logistica.dtos.PorcesarSolicitudDto;
 import utn.frc.backend.tpi.logistica.dtos.SolicitudDto;
+import utn.frc.backend.tpi.logistica.dtos.SolicitudPeticionTrasladoDTO;
+import utn.frc.backend.tpi.logistica.dtos.SolicitudResumenDTO;
 import utn.frc.backend.tpi.logistica.mappers.SolicitudMapper;
 import utn.frc.backend.tpi.logistica.models.Solicitud;
 import utn.frc.backend.tpi.logistica.services.SolicitudService;
@@ -35,6 +38,20 @@ public class SolicitudController {
     }
 
     @PostMapping
+    public ResponseEntity<?> crearPeticionTraslado(@RequestBody SolicitudPeticionTrasladoDTO solicitudPeticionTrasladoDTO){
+        try {
+            Solicitud solicitud = solicitudMapper.fromPeticionTrasladoDto(solicitudPeticionTrasladoDTO);
+            Solicitud peticion = solicitudService.crearPeticionTraslado(solicitud);
+            SolicitudResumenDTO rtaDto = solicitudMapper.toResumenDto(peticion);
+            return ResponseEntity.status(HttpStatus.CREATED).body(rtaDto);
+        } catch (Exception e) {
+            e.printStackTrace(); 
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body("Error al crear solicitud: " + e.getMessage());
+        }
+    }
+
+    /*@PostMapping
     public ResponseEntity<?> crear(@RequestBody SolicitudDto solicitudDto) {
         try {
             Solicitud solicitud = solicitudMapper.toEntity(solicitudDto);
@@ -47,6 +64,22 @@ public class SolicitudController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body("Error al crear solicitud: " + e.getMessage());
         }
+    }*/
+
+    @PutMapping("/{id}/procesar-solicitud") 
+    public ResponseEntity<?> procesarSolicitd(@PathVariable Long id, @RequestBody PorcesarSolicitudDto dto) {
+        try {
+            Solicitud solicitud = solicitudService.obtenerPorId(id);
+            solicitudMapper.actualizarDesdeProcesarDto(dto, solicitud);
+            Solicitud actualizada = solicitudService.procesarSolicitud(solicitud);
+            SolicitudDto rtaDto = solicitudMapper.toDto(actualizada);
+            return ResponseEntity.status(HttpStatus.CREATED).body(rtaDto);
+        } catch (Exception e) {
+            e.printStackTrace(); 
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body("Error al crear solicitud: " + e.getMessage());
+        }
+
     }
 
     @PutMapping("/{id}")

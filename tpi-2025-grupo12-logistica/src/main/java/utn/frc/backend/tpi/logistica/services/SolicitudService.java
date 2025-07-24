@@ -55,11 +55,8 @@ public class SolicitudService {
         }
     }
 
-    public Solicitud crear(Solicitud solicitud) {
-        if (solicitud.getFechaEstimadaDespacho() == null) {
-            throw new IllegalArgumentException("La solicitud debe tener una fecha estimada de despacho.");
-        }
-
+    public Solicitud crearPeticionTraslado(Solicitud solicitud){
+        
         // 1. Obtener contenedor
         String contenedorUrl = baseUrl + "/contenedores/" + solicitud.getContenedorId();
         ContenedorDto contenedor = restTemplate.getForObject(contenedorUrl, ContenedorDto.class);
@@ -71,6 +68,20 @@ public class SolicitudService {
         if (existente.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El contenedor ya está asignado a otra solicitud.");
         }
+        return solicitudRepo.save(solicitud);
+
+    }
+
+    public Solicitud procesarSolicitud(Solicitud solicitud) {
+        if (solicitud.getFechaEstimadaDespacho() == null) {
+            throw new IllegalArgumentException("La solicitud debe tener una fecha estimada de despacho.");
+        }
+
+        // 1. Obtener contenedor
+        String contenedorUrl = baseUrl + "/contenedores/" + solicitud.getContenedorId();
+        ContenedorDto contenedor = restTemplate.getForObject(contenedorUrl, ContenedorDto.class);
+        if (contenedor == null)
+            throw new RuntimeException("Contenedor no encontrado");
 
         // 3. Obtener camión
         String camionUrl = baseUrl + "/camiones/" + solicitud.getCamionId();
@@ -79,9 +90,11 @@ public class SolicitudService {
             throw new RuntimeException("Camión no encontrado");
 
         // 4. Validar disponibilidad del camión
+        
         if (!camion.isDisponibilidad()) {
             throw new RuntimeException("El camión no está disponible");
         }
+        
 
         // 5. Validar pesos
         validarPesos(contenedor, camion);
@@ -92,7 +105,13 @@ public class SolicitudService {
             throw new RuntimeException("No se pudieron generar tramos de ruta.");
         }
 
-        solicitud.setTramos(tramos);
+        solicitud.getTramos().clear();
+        for (TramoRuta tramo : tramos) {
+            tramo.setSolicitud(solicitud);
+            solicitud.getTramos().add(tramo);
+        }
+
+        //solicitud.setTramos(tramos);
 
         // 7. Calcular costos y tiempos
         double costo = tarifaService.calcularTarifaSolicitud(solicitud);

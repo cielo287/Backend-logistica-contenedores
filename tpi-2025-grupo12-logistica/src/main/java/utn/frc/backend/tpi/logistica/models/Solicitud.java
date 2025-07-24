@@ -51,7 +51,7 @@ public class Solicitud {
     private Double tiempoEstimadoHoras;
 
     @Column(name = "fecha_estimada_despacho")
-    @NotNull(message = "La fecha estimada de despacho es obligatoria")
+    //@NotNull(message = "La fecha estimada de despacho es obligatoria")
     private LocalDate fechaEstimadaDespacho;
 
     @Column(name = "es_finalizada", nullable = false)

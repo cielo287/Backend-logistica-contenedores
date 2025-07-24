@@ -23,16 +23,3 @@ public interface TramoRutaMapper {
 
     List<TramoRuta> toEntityList(List<TramoRutaDto> dtoList);
 }
-
-
-
-/*@Mapper(componentModel = "spring")
-public interface TramoRutaMapper {
-    @Mapping(source = "ubicacionOrigenId", target = "origenId")
-    @Mapping(source = "ubicacionDestinoId", target = "destinoId")
-    TramoRutaDto toDTO(TramoRuta tramoRuta);
-    List<TramoRutaDto> toDtoList(List<TramoRuta> tramos);
-
-    TramoRuta toEntity(TramoRutaDto dto);
-    List<TramoRuta> toEntityList(List<TramoRutaDto> dtoList);
-}*/
