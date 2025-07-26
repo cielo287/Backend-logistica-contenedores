@@ -14,9 +14,9 @@ public class CiudadProxyController {
     private GeoService geoService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<CiudadDto> obtenerCiudad(@PathVariable Long id) {
+    public ResponseEntity<CiudadDto> obtenerCiudad(@PathVariable Long id, String autHeader) {
         try {
-            CiudadDto ciudad = geoService.getCiudadById(id);
+            CiudadDto ciudad = geoService.getCiudadById(id, autHeader);
             return ResponseEntity.ok(ciudad);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

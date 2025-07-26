@@ -8,9 +8,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.server.WebFilter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,6 +29,8 @@ public class SecurityConfig {
         http
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(exchange -> exchange
+                .pathMatchers("/api/logistica/tramos-ruta/observer/estado").permitAll()
+                .pathMatchers(HttpMethod.POST, "/api/logistica/solicitudes").hasAnyRole("cliente", "admin")
                 .pathMatchers("/api/logistica/solicitudes/*").hasAnyRole("cliente", "admin")
                 .pathMatchers("/api/logistica/**").hasRole("admin")
                 .pathMatchers("/api/pedidos/*/seguimiento").hasAnyRole("cliente", "admin")
@@ -39,18 +44,18 @@ public class SecurityConfig {
         return http.build();
     }
 
-private Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter() {
-    ReactiveJwtAuthenticationConverter converter = new ReactiveJwtAuthenticationConverter();
-    converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-        List<String> roles = extractRealmRoles(jwt);
-        List<SimpleGrantedAuthority> authorities = roles.stream()
-            .map(role -> "ROLE_" + role)
-            .map(SimpleGrantedAuthority::new)
-            .collect(Collectors.toList());
-        return Flux.fromIterable(authorities);
-    });
-    return converter;
-}
+    private Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter() {
+        ReactiveJwtAuthenticationConverter converter = new ReactiveJwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            List<String> roles = extractRealmRoles(jwt);
+            List<SimpleGrantedAuthority> authorities = roles.stream()
+                .map(role -> "ROLE_" + role)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+            return Flux.fromIterable(authorities);
+        });
+        return converter;
+    }
 
     private List<String> extractRealmRoles(Jwt jwt) {
         Map<String, Object> realmAccess = jwt.getClaim("realm_access");
@@ -59,4 +64,14 @@ private Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConve
         }
         return (List<String>) realmAccess.get("roles");
     }
+
+    @Bean
+    public WebFilter logAuthHeader(){
+        return (exchange, chain) -> {
+            String autHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+            System.out.println("Authorization Header: " + autHeader);
+            return chain.filter(exchange);
+        };
+    }
+    
 }

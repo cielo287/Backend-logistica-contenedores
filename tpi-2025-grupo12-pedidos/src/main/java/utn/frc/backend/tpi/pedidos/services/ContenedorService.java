@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
+
+import utn.frc.backend.tpi.pedidos.config.RestTemplateFactory;
 import utn.frc.backend.tpi.pedidos.dto.ContenedorRequestDTO;
 import utn.frc.backend.tpi.pedidos.dto.EstadoSimpleDto;
 import utn.frc.backend.tpi.pedidos.dto.NotificarCambioEstadoDto;
@@ -118,8 +120,10 @@ public class ContenedorService {
 
     // METODO PARA VALIDAR SI EL CONTENEDOR TIENE DEPOSITO
     
-    private boolean contenedorTieneDeposito(Long contenedorId) {
+    private boolean contenedorTieneDeposito(Long contenedorId, String autHeader) {
     try {
+        String token = autHeader.replace("Bearer ", "");
+        RestTemplate restTemplate = RestTemplateFactory.conToken(token);
         return restTemplate.getForObject(
             "http://localhost:8082/api/logistica/solicitudes/contenedor/" + contenedorId + "/tiene-deposito",
             Boolean.class
@@ -131,7 +135,7 @@ public class ContenedorService {
 
     
     // METODO PARA ACTUALIZAR EL ESTADO DEL CONTENEDOR Y GUARDAR EN HISTORIAL
-    public Contenedor actualizarEstado(Long contenedorId, Long estadoId) {
+    public Contenedor actualizarEstado(Long contenedorId, Long estadoId, String autHeader) {
 
         Contenedor contenedor = obtenerPorId(contenedorId);
 
@@ -145,7 +149,7 @@ public class ContenedorService {
 
         // Validar transición
         // Consultar si tiene depósito
-        boolean tieneDeposito = contenedorTieneDeposito(contenedorId);
+        boolean tieneDeposito = contenedorTieneDeposito(contenedorId, autHeader);
 
         // Validar transición con depósito
         if (!estadoActual.puedeTransicionarA(nombreNuevo, tieneDeposito)) {
@@ -176,12 +180,23 @@ public class ContenedorService {
         historial.setFechaCambio(LocalDate.now());
         historialEstadoRepo.save(historial);
         
+        try {
+            restTemplate.postForEntity(
+        "http://localhost:8082/api/logistica/tramos-ruta/observer/estado",
+        new NotificarCambioEstadoDto(contenedorId, nuevoEstado.getId(), historial.getFechaCambio()),
+Void.class
+    );
+        } catch (Exception e) {
+            System.out.println("Error al notificar a Logística: " + e.getMessage());
+    // Podés loguearlo con logger, lanzarlo de nuevo, o ignorarlo según tu necesidad
+    }
         // Notificar a Logística
-        restTemplate.postForEntity(
+        /*restTemplate.postForEntity(
             "http://localhost:8082/api/logistica/tramos-ruta/observer/estado",
             new NotificarCambioEstadoDto(contenedorId, nuevoEstado.getId(), historial.getFechaCambio()),
             Void.class
-        );
+        
+            );*/
 
     return contenedor;
     }

@@ -52,7 +52,7 @@ public class TramoRutaService {
         tramoRutaRepo.deleteById(id);
     }
 
-    public List<TramoRuta> generarTramos(Solicitud solicitud) {
+    public List<TramoRuta> generarTramos(Solicitud solicitud, String autHeader) {
 
         List<TramoRuta> tramos = new ArrayList<>();
 
@@ -61,7 +61,7 @@ public class TramoRutaService {
 
                 // Tramo Ciudad → Depósito
                 TramoRutaDto tramo1Dto = geoService.calcularDistanciaCiudadADeposito(
-                        solicitud.getCiudadOrigenId(), solicitud.getDepositoId());
+                        solicitud.getCiudadOrigenId(), solicitud.getDepositoId(), autHeader);
 
                 int diasEstimados1 = (int) Math.ceil(tramo1Dto.getTiempoEstimado() / 24);
 
@@ -80,7 +80,7 @@ public class TramoRutaService {
 
                 // Tramo Depósito → Ciudad destino
                 TramoRutaDto tramo2Dto = geoService.calcularDistanciaDepositoACiudad(
-                        solicitud.getDepositoId(), solicitud.getCiudadDestinoId());
+                        solicitud.getDepositoId(), solicitud.getCiudadDestinoId(), autHeader);
 
                 int diasEstimados2 = (int) Math.ceil(tramo2Dto.getTiempoEstimado() / 24);
 
@@ -100,7 +100,7 @@ public class TramoRutaService {
             } else {
                 // Tramo único Ciudad → Ciudad
                 TramoRutaDto tramoDto = geoService.calcularDistanciaEntreCiudades(
-                        solicitud.getCiudadOrigenId(), solicitud.getCiudadDestinoId());
+                        solicitud.getCiudadOrigenId(), solicitud.getCiudadDestinoId(), autHeader);
 
                 int diasEstimados = (int) Math.ceil(tramoDto.getTiempoEstimado() / 24);
 

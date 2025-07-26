@@ -23,7 +23,8 @@ INSERT INTO cliente (nombre, email, password) VALUES
 INSERT INTO camion (capacidad_peso, volumen, disponibilidad) VALUES 
   (12000.0, 90.0, TRUE),
   (15000.0, 100.0, FALSE),
-  (8000.0, 60.0, TRUE);
+  (8000.0, 60.0, TRUE),
+  (2000.0, 1000.0, TRUE);
 
 -- ====================
 -- ESTADOS DE CONTENEDORES
@@ -47,7 +48,8 @@ INSERT INTO contenedor (peso, volumen, estado_id, cliente_id) VALUES
   (1000000, 400, 1, 1),-----mucho peso
   (1300.0, 9.0, 4, 1), -- Entregado en destino
   (950.0, 6.8, 4, 2), -- Entregado en destino
-  (620.0, 4.0, 5, 1);
+  (620.0, 4.0, 5, 1),
+  (10.0, 100.0, 5, 1);
 
 
 -- ====================

@@ -3,6 +3,8 @@ package utn.frc.backend.tpi.logistica.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import utn.frc.backend.tpi.logistica.config.RestTemplateFactory;
 import utn.frc.backend.tpi.logistica.dtos.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +28,10 @@ public class GeoService {
     private String depositosBaseUrl;
 
     // Métodos existentes
-    public CiudadDto getCiudadById(Long id) {
+    public CiudadDto getCiudadById(Long id, String autHeader) {
+        String token = autHeader.replace("Bearer ", "");
+        RestTemplate restTemplate = RestTemplateFactory.conToken(token);
+        
         String url = ciudadesBaseUrl + "/ciudades/" + id;
         System.out.println("Llamando a: " + url);
         try {
@@ -38,7 +43,10 @@ public class GeoService {
     }
 
     // Nuevo método para obtener depósitos
-    public DepositoDto getDepositoById(Long id) {
+    public DepositoDto getDepositoById(Long id, String autHeader) {
+        String token = autHeader.replace("Bearer ", "");
+        RestTemplate restTemplate = RestTemplateFactory.conToken(token);
+
         String url = depositosBaseUrl + "/depositos/" + id + "/dto";
         System.out.println("Llamando a depósito: " + url);
         try {
@@ -53,25 +61,25 @@ public class GeoService {
     }
 
     // Método genérico para obtener cualquier ubicable
-    public Ubicable getUbicableById(Long id, String tipo) {
+    public Ubicable getUbicableById(Long id, String tipo, String autHeader) {
         if ("CIUDAD".equals(tipo)) {
-            return getCiudadById(id);
+            return getCiudadById(id,autHeader);
         } else if ("DEPOSITO".equals(tipo)) {
-            return getDepositoById(id);
+            return getDepositoById(id,autHeader);
         } else {
             throw new IllegalArgumentException("Tipo no válido: " + tipo);
         }
     }
 
     // Método original mantenido para compatibilidad
-    public TramoRutaDto calcularDistancia(Long origenId, Long destinoId) throws Exception {
-        return calcularDistanciaEntreCiudades(origenId, destinoId);
+    public TramoRutaDto calcularDistancia(Long origenId, Long destinoId, String autHeader) throws Exception {
+        return calcularDistanciaEntreCiudades(origenId, destinoId, autHeader);
     }
 
     // Método específico para ciudades
-    public TramoRutaDto calcularDistanciaEntreCiudades(Long origenId, Long destinoId) throws Exception {
-        CiudadDto origen = getCiudadById(origenId);
-        CiudadDto destino = getCiudadById(destinoId);
+    public TramoRutaDto calcularDistanciaEntreCiudades(Long origenId, Long destinoId, String autHeader) throws Exception {
+        CiudadDto origen = getCiudadById(origenId, autHeader);
+        CiudadDto destino = getCiudadById(destinoId, autHeader);
 
         TramoRutaDto dto = calcularDistanciaEntreUbicables(origen, destino);
         dto.setOrigenId(origenId);
@@ -83,9 +91,9 @@ public class GeoService {
     }
 
     // Método específico para depósitos
-    public TramoRutaDto calcularDistanciaEntreDepositos(Long origenId, Long destinoId) throws Exception {
-        DepositoDto origen = getDepositoById(origenId);
-        DepositoDto destino = getDepositoById(destinoId);
+    public TramoRutaDto calcularDistanciaEntreDepositos(Long origenId, Long destinoId, String autHeader) throws Exception {
+        DepositoDto origen = getDepositoById(origenId, autHeader);
+        DepositoDto destino = getDepositoById(destinoId, autHeader);
 
         TramoRutaDto dto = calcularDistanciaEntreUbicables(origen, destino);
         dto.setOrigenId(origenId);
@@ -97,9 +105,9 @@ public class GeoService {
     }
 
     // Método mixto: ciudad a depósito
-    public TramoRutaDto calcularDistanciaCiudadADeposito(Long ciudadId, Long depositoId) throws Exception {
-        CiudadDto origen = getCiudadById(ciudadId);
-        DepositoDto destino = getDepositoById(depositoId);
+    public TramoRutaDto calcularDistanciaCiudadADeposito(Long ciudadId, Long depositoId, String autHeader) throws Exception {
+        CiudadDto origen = getCiudadById(ciudadId, autHeader);
+        DepositoDto destino = getDepositoById(depositoId, autHeader);
 
         TramoRutaDto dto = calcularDistanciaEntreUbicables(origen, destino);
         dto.setOrigenId(ciudadId);
@@ -111,9 +119,9 @@ public class GeoService {
     }
 
     // Método mixto: depósito a ciudad
-    public TramoRutaDto calcularDistanciaDepositoACiudad(Long depositoId, Long ciudadId) throws Exception {
-        DepositoDto origen = getDepositoById(depositoId);
-        CiudadDto destino = getCiudadById(ciudadId);
+    public TramoRutaDto calcularDistanciaDepositoACiudad(Long depositoId, Long ciudadId, String autHeader) throws Exception {
+        DepositoDto origen = getDepositoById(depositoId, autHeader);
+        CiudadDto destino = getCiudadById(ciudadId, autHeader);
 
         TramoRutaDto dto = calcularDistanciaEntreUbicables(origen, destino);
         dto.setOrigenId(depositoId);
@@ -125,10 +133,10 @@ public class GeoService {
     }
 
     // Método flexible
-    public TramoRutaDto calcularDistanciaFlexible(Long origenId, String origenTipo, Long destinoId, String destinoTipo)
+    public TramoRutaDto calcularDistanciaFlexible(Long origenId, String origenTipo, Long destinoId, String destinoTipo, String autHeader)
             throws Exception {
-        Ubicable origen = getUbicableById(origenId, origenTipo);
-        Ubicable destino = getUbicableById(destinoId, destinoTipo);
+        Ubicable origen = getUbicableById(origenId, origenTipo, autHeader);
+        Ubicable destino = getUbicableById(destinoId, destinoTipo, autHeader);
 
         TramoRutaDto dto = calcularDistanciaEntreUbicables(origen, destino);
         dto.setOrigenId(origenId);

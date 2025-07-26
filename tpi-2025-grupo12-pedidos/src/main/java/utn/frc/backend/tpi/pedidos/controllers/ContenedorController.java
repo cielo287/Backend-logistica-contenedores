@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import utn.frc.backend.tpi.pedidos.dto.ContenedorDTO;
@@ -73,8 +74,8 @@ public class ContenedorController {
 
     //CONTROLADOR DE ACTUALIZAR EL AVANCE DEL CONTENEDOR
     @PutMapping("/{id}/estado")
-    public ContenedorDTO actualizarEstado(@PathVariable Long id, @RequestBody Estado nuevoEstado) {
-    Contenedor actualizado = contenedorService.actualizarEstado(id, nuevoEstado.getId());
+    public ContenedorDTO actualizarEstado(@PathVariable Long id, @RequestBody Estado nuevoEstado, @RequestHeader("Authorization") String autHeader) {
+    Contenedor actualizado = contenedorService.actualizarEstado(id, nuevoEstado.getId(), autHeader);
         return contenedorMapper.toDTO(actualizado);
         //PARA REALIZAR VALIDADCION DE ESTADO Y DEPOSITO HACER COMUNICACION CON MICRO LOGISTICA
     }
