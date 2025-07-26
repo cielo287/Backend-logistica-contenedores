@@ -157,12 +157,14 @@ public class TramoRutaService {
         // Entregado en deposito
         else if (estadoId == 2) {
             tramos.get(0).setFechaRealLlegada(fecha);
+    
         }
 
         // Retirado de deposito
 
         else if (estadoId == 3) {
             tramos.get(1).setFechaRealSalida(fecha);
+    
         }
 
         // EntragadoEnDestino

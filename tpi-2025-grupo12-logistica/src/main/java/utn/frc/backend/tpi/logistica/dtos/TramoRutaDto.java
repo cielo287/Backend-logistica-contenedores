@@ -1,7 +1,8 @@
 package utn.frc.backend.tpi.logistica.dtos;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 @Data
@@ -11,10 +12,19 @@ public class TramoRutaDto {
     private String origenTipo; // "CIUDAD" o "DEPOSITO"
     private Long destinoId;
     private String destinoTipo; // "CIUDAD" o "DEPOSITO"
-    private Date fechaEstimadaSalida;
-    private Date fechaRealSalida;
-    private Date fechaEstimadaLlegada;
-    private Date fechaRealLlegada;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate fechaEstimadaSalida;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate fechaRealSalida;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate fechaEstimadaLlegada;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate fechaRealLlegada;
+
     private Double distancia;
     private Double tiempoEstimado;
 }

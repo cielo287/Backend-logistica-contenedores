@@ -23,6 +23,9 @@ spring:
     init:
       mode: always
 
+  jackson:
+    time-zone: America/Argentina/Buenos_Aires
+
 springdoc: 
   swagger-ui: 
     path: /swagger-ui.html 
