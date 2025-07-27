@@ -46,10 +46,10 @@ public class SolicitudController {
     //CONTROLADOR PARA QUE EL CLIENTE SOLICITE EL TRASLADO
 
     @PostMapping
-    public ResponseEntity<?> crearPeticionTraslado(@RequestBody SolicitudPeticionTrasladoDTO solicitudPeticionTrasladoDTO){
+    public ResponseEntity<?> crearPeticionTraslado(@RequestBody SolicitudPeticionTrasladoDTO solicitudPeticionTrasladoDTO, @RequestHeader("Authorization") String autHeader){
         try {
             Solicitud solicitud = solicitudMapper.fromPeticionTrasladoDto(solicitudPeticionTrasladoDTO);
-            Solicitud peticion = solicitudService.crearPeticionTraslado(solicitud);
+            Solicitud peticion = solicitudService.crearPeticionTraslado(solicitud, autHeader);
             SolicitudResumenDTO rtaDto = solicitudMapper.toResumenDto(peticion);
             return ResponseEntity.status(HttpStatus.CREATED).body(rtaDto);
         } catch (Exception e) {
@@ -62,11 +62,11 @@ public class SolicitudController {
     //CONTROLADOR PARA PROCESAR LAS SOLICITUDES CREADAS POR EL CLIENTE
     
     @PutMapping("/{id}/procesar-solicitud") 
-    public ResponseEntity<?> procesarSolicitd(@PathVariable Long id, @RequestBody PorcesarSolicitudDto dto) {
+    public ResponseEntity<?> procesarSolicitd(@PathVariable Long id, @RequestBody PorcesarSolicitudDto dto, @RequestHeader("Authorization") String autHeader) {
         try {
             Solicitud solicitud = solicitudService.obtenerPorId(id);
             solicitudMapper.actualizarDesdeProcesarDto(dto, solicitud);
-            Solicitud actualizada = solicitudService.procesarSolicitud(solicitud);
+            Solicitud actualizada = solicitudService.procesarSolicitud(solicitud, autHeader);
             SolicitudDto rtaDto = solicitudMapper.toDto(actualizada);
             return ResponseEntity.status(HttpStatus.CREATED).body(rtaDto);
         } catch (Exception e) {

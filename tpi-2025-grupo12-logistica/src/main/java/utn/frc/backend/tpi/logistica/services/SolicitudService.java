@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import utn.frc.backend.tpi.logistica.config.RestTemplateFactory;
 import utn.frc.backend.tpi.logistica.dtos.CamionDto;
 import utn.frc.backend.tpi.logistica.dtos.ContenedorDto;
 import utn.frc.backend.tpi.logistica.dtos.EstadoSolicitudDto;
@@ -55,8 +56,10 @@ public class SolicitudService {
         }
     }
 
-    public Solicitud crearPeticionTraslado(Solicitud solicitud){
-        
+    public Solicitud crearPeticionTraslado(Solicitud solicitud, String autHeader){
+
+        String token = autHeader.replace("Bearer ", "");
+        RestTemplate restTemplate = RestTemplateFactory.conToken(token);
         // 1. Obtener contenedor
         String contenedorUrl = baseUrl + "/contenedores/" + solicitud.getContenedorId();
         ContenedorDto contenedor = restTemplate.getForObject(contenedorUrl, ContenedorDto.class);
@@ -68,11 +71,14 @@ public class SolicitudService {
         if (existente.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El contenedor ya está asignado a otra solicitud.");
         }
+        
         return solicitudRepo.save(solicitud);
 
     }
 
-    public Solicitud procesarSolicitud(Solicitud solicitud) {
+    public Solicitud procesarSolicitud(Solicitud solicitud, String autHeader) {
+        String token = autHeader.replace("Bearer ", "");
+        RestTemplate restTemplate = RestTemplateFactory.conToken(token);
         if (solicitud.getFechaEstimadaDespacho() == null) {
             throw new IllegalArgumentException("La solicitud debe tener una fecha estimada de despacho.");
         }
@@ -100,7 +106,7 @@ public class SolicitudService {
         validarPesos(contenedor, camion);
 
         // 6. Generar tramos
-        List<TramoRuta> tramos = tramoRutaService.generarTramos(solicitud);
+        List<TramoRuta> tramos = tramoRutaService.generarTramos(solicitud, autHeader);
         if (tramos == null || tramos.isEmpty()) {
             throw new RuntimeException("No se pudieron generar tramos de ruta.");
         }
@@ -111,10 +117,8 @@ public class SolicitudService {
             solicitud.getTramos().add(tramo);
         }
 
-        //solicitud.setTramos(tramos);
-
         // 7. Calcular costos y tiempos
-        double costo = tarifaService.calcularTarifaSolicitud(solicitud);
+        double costo = tarifaService.calcularTarifaSolicitud(solicitud, autHeader);
         solicitud.setCostoEstimado(costo);
 
         double tiempoTotal = tramos.stream().filter(t -> t.getTiempoEstimado() != null)

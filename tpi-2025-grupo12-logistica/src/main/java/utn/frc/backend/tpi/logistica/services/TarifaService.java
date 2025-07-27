@@ -16,6 +16,7 @@ import utn.frc.backend.tpi.logistica.models.Solicitud;
 import utn.frc.backend.tpi.logistica.models.Tarifa;
 import utn.frc.backend.tpi.logistica.models.TramoRuta;
 import utn.frc.backend.tpi.logistica.repositories.TarifaRepository;
+import utn.frc.backend.tpi.logistica.config.RestTemplateFactory;
 import utn.frc.backend.tpi.logistica.dtos.CamionDto;
 
 import java.util.Comparator;
@@ -37,8 +38,10 @@ public class TarifaService {
     @Autowired
     private TarifaRepository tarifaRepo;
 
-    public double obtenerPesoTotal(Long camionId, Long contenedorId) {
+    public double obtenerPesoTotal(Long camionId, Long contenedorId, String autHeader) {
         try {
+            String token = autHeader.replace("Bearer ", "");
+            RestTemplate restTemplate = RestTemplateFactory.conToken(token);
             String urlCamion = camionesBaseUrl + "/camiones/" + camionId;
             String urlContenedor = contenedoresBaseUrl + "/contenedores/" + contenedorId;
 
@@ -55,7 +58,7 @@ public class TarifaService {
 
             return camion.getCapacidadPeso() + contenedor.getPeso();
         } catch (Exception e) {
-            // Podés personalizar este manejo según tu lógica de negocio
+  
             System.err.println("Error al obtener el peso total: " + e.getMessage());
             throw new RuntimeException("No se pudo calcular el peso total del envío", e);
         }
@@ -80,7 +83,7 @@ public class TarifaService {
         }
     }
 
-    public double calcularTarifaSolicitud(Solicitud solicitud) {
+    public double calcularTarifaSolicitud(Solicitud solicitud, String autHeader) {
         if (solicitud == null) {
             throw new IllegalArgumentException("La solicitud no puede ser nula.");
         }
@@ -91,7 +94,7 @@ public class TarifaService {
 
         double pesoTotal;
         try {
-            pesoTotal = obtenerPesoTotal(solicitud.getCamionId(), solicitud.getContenedorId());
+            pesoTotal = obtenerPesoTotal(solicitud.getCamionId(), solicitud.getContenedorId(), autHeader);
         } catch (Exception e) {
             System.err.println("Error al obtener peso total: " + e.getMessage());
             throw new RuntimeException("Error al calcular tarifa: no se pudo obtener el peso total del envío.", e);
