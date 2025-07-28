@@ -13,7 +13,9 @@ import org.springframework.web.server.ResponseStatusException;
 import utn.frc.backend.tpi.logistica.config.RestTemplateFactory;
 import utn.frc.backend.tpi.logistica.dtos.CamionDto;
 import utn.frc.backend.tpi.logistica.dtos.ContenedorDto;
+import utn.frc.backend.tpi.logistica.dtos.EstadoSimpleDTO;
 import utn.frc.backend.tpi.logistica.dtos.EstadoSolicitudDto;
+import utn.frc.backend.tpi.logistica.dtos.SolicitudResumenClienteDTO;
 import utn.frc.backend.tpi.logistica.models.Solicitud;
 import utn.frc.backend.tpi.logistica.models.TramoRuta;
 import utn.frc.backend.tpi.logistica.repositories.SolicitudRepository;
@@ -143,31 +145,40 @@ public class SolicitudService {
         solicitudRepo.deleteById(id);
     }
 
-    // METODO PARA OBTENER LAS SOLICITUDES SEGUN EL ESTADO
-    public EstadoSolicitudDto obtenerEstadoSolicitud(Long solicitudId, Long clienteId) {
-        // BUSCAR SOLICITUD
-        Solicitud solicitud = solicitudRepo.findById(solicitudId)
-                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
-        // VERIFICAR SI CONTENEDOR EXISTE
+    // METODO PARA CREAR LA CONSULTA RESUMIDA DE SOLICITUD
+    public SolicitudResumenClienteDTO obtenerResumenCliente(Long solicitudId) {
+
+        Solicitud solicitud = obtenerPorId(solicitudId);
+
+        // Obtener contenedor (para ID, cliente, etc.)
         String contenedorUrl = baseUrl + "/contenedores/" + solicitud.getContenedorId();
         ContenedorDto contenedor = restTemplate.getForObject(contenedorUrl, ContenedorDto.class);
+        if (contenedor == null) throw new RuntimeException("Contenedor no encontrado");
 
-        if (contenedor == null) {
-            throw new RuntimeException("Contenedor no encontrado");
+        // Obtener historial de estados
+        String historialUrl = baseUrl + "/contenedores/" + solicitud.getContenedorId() + "/seguimiento";
+        EstadoSimpleDTO[] historial = restTemplate.getForObject(historialUrl, EstadoSimpleDTO[].class);
+
+        String estadoActual = "Sin estado";
+        if (historial != null && historial.length > 0) {
+            // Asumimos que ya viene ordenado por fecha ascendente
+            EstadoSimpleDTO ultimo = historial[historial.length - 1];
+            estadoActual = ultimo.getNombreEstado();
         }
 
-        // VERIFICAR QUE EL CONTENEDOR PERTENEZCA AL CLIENTE
-        if (!contenedor.getClienteId().equals(clienteId)) {
-            throw new RuntimeException("El cliente no tiene acceso a esta solicitud");
-        }
-
-        return new EstadoSolicitudDto(
-                solicitud.getId(),
-                contenedor.getId(),
-                contenedor.getClienteId(),
-                contenedor.getEstado().getNombre());
+        return new SolicitudResumenClienteDTO(
+            solicitud.getId(),
+            solicitud.getContenedorId(),
+            solicitud.getCiudadOrigenId(),
+            solicitud.getCiudadDestinoId(),
+            solicitud.getCostoEstimado(),
+            solicitud.getTiempoEstimadoHoras(),
+            solicitud.getFechaEstimadaDespacho(),
+            estadoActual
+        );
     }
+
 
     public String informeDesempeño() {
         List<Solicitud> solicitudesFinalizadas = solicitudRepo.findByEsFinalizadaTrue();
@@ -209,12 +220,14 @@ public class SolicitudService {
                 adelantado, aTiempo, atrasado, desempeñoGeneral);
     }
 
+
     public boolean tieneDepositoAsignado(Long contenedorId) {
         Solicitud solicitud = solicitudRepo.findByContenedorId(contenedorId)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada para el contenedor"));
 
         return solicitud.getDepositoId() != null;
     }
+
 
     public List<Solicitud> obtenerSolicitudesSinCamion() {
         return solicitudRepo.findByCamionIdIsNull();

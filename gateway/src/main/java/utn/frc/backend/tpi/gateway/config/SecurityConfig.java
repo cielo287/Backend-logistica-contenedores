@@ -1,5 +1,6 @@
 package utn.frc.backend.tpi.gateway.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -24,8 +25,18 @@ import org.springframework.core.convert.converter.Converter;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
+    @Value("${seguridad.desactivada:false}")
+    private boolean seguridadDesactivada;
+
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
+        if (seguridadDesactivada) {
+            return http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(ex -> ex.anyExchange().permitAll())
+                .build();
+        }
+
         http
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(exchange -> exchange
@@ -43,6 +54,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     private Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter() {
         ReactiveJwtAuthenticationConverter converter = new ReactiveJwtAuthenticationConverter();

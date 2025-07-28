@@ -11,6 +11,7 @@ import utn.frc.backend.tpi.logistica.dtos.EstadoSolicitudDto;
 import utn.frc.backend.tpi.logistica.dtos.PorcesarSolicitudDto;
 import utn.frc.backend.tpi.logistica.dtos.SolicitudDto;
 import utn.frc.backend.tpi.logistica.dtos.SolicitudPeticionTrasladoDTO;
+import utn.frc.backend.tpi.logistica.dtos.SolicitudResumenClienteDTO;
 import utn.frc.backend.tpi.logistica.dtos.SolicitudResumenDTO;
 import utn.frc.backend.tpi.logistica.mappers.SolicitudMapper;
 import utn.frc.backend.tpi.logistica.models.Solicitud;
@@ -43,8 +44,15 @@ public class SolicitudController {
         return solicitudService.obtenerSolicitudesSinCamion().stream().map(solicitudMapper::toDto).toList();
     }
 
-    //CONTROLADOR PARA QUE EL CLIENTE SOLICITE EL TRASLADO
+    // CONTROLADOR PARA OBETENER LA SOLICITUD RESUMIDA
+    @GetMapping("/{id}/resumen-cliente")
+    public ResponseEntity<SolicitudResumenClienteDTO> obtenerResumenCliente(@PathVariable Long id) {
+        SolicitudResumenClienteDTO resumen = solicitudService.obtenerResumenCliente(id);
+        return ResponseEntity.ok(resumen);
+    }
 
+
+    //CONTROLADOR PARA QUE EL CLIENTE SOLICITE EL TRASLADO
     @PostMapping
     public ResponseEntity<?> crearPeticionTraslado(@RequestBody SolicitudPeticionTrasladoDTO solicitudPeticionTrasladoDTO, @RequestHeader("Authorization") String autHeader){
         try {
@@ -59,8 +67,8 @@ public class SolicitudController {
         }
     }
 
+
     //CONTROLADOR PARA PROCESAR LAS SOLICITUDES CREADAS POR EL CLIENTE
-    
     @PutMapping("/{id}/procesar-solicitud") 
     public ResponseEntity<?> procesarSolicitd(@PathVariable Long id, @RequestBody PorcesarSolicitudDto dto, @RequestHeader("Authorization") String autHeader) {
         try {
@@ -74,7 +82,6 @@ public class SolicitudController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body("Error al crear solicitud: " + e.getMessage());
         }
-
     }
 
     @PutMapping("/{id}")
@@ -86,14 +93,6 @@ public class SolicitudController {
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         solicitudService.eliminar(id);
-    }
-
-    // CONTROLLADOR DE SOLICITUD DEL CLIENTE Y SU ESTADO
-    @GetMapping("/clientes/{clienteId}/solicitudes/{solicitudId}/estado")
-    public EstadoSolicitudDto obtenerEstadoSolicitud(
-            @PathVariable Long clienteId,
-            @PathVariable Long solicitudId) {
-        return solicitudService.obtenerEstadoSolicitud(solicitudId, clienteId);
     }
 
     @GetMapping("/informe-desempeno")

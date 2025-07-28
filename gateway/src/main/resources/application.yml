@@ -24,8 +24,11 @@ spring:
             - Path=/api/logistica/**
           filters:
             - StripPrefix=2
-
+  
       
 server:
   port: 8082
+
+seguridad:
+  desactivada: true
 
