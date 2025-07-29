@@ -41,10 +41,12 @@ public class SecurityConfig {
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(exchange -> exchange
                 .pathMatchers("/api/logistica/tramos-ruta/observer/estado").permitAll()
+                .pathMatchers("/api/logistica/solicitudes/{id}/resumen-cliente").hasAnyRole("cliente", "admin")
                 .pathMatchers(HttpMethod.POST, "/api/logistica/solicitudes").hasAnyRole("cliente", "admin")
                 .pathMatchers("/api/logistica/solicitudes/*").hasAnyRole("cliente", "admin")
                 .pathMatchers("/api/logistica/**").hasRole("admin")
-                .pathMatchers("/api/pedidos/*/seguimiento").hasAnyRole("cliente", "admin")
+                .pathMatchers("/api/pedidos/contenedores/*/seguimiento").hasAnyRole("cliente", "admin")
+                .pathMatchers("/api/pedidos/contenedores/*").hasAnyRole("cliente", "admin")
                 .pathMatchers("/api/pedidos/**").hasRole("admin")
                 .anyExchange().authenticated()
             )
@@ -77,13 +79,13 @@ public class SecurityConfig {
         return (List<String>) realmAccess.get("roles");
     }
 
-    @Bean
+    /*@Bean
     public WebFilter logAuthHeader(){
         return (exchange, chain) -> {
             String autHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             System.out.println("Authorization Header: " + autHeader);
             return chain.filter(exchange);
         };
-    }
+    }*/
     
 }

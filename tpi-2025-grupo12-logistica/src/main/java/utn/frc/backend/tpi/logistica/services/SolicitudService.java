@@ -147,7 +147,10 @@ public class SolicitudService {
 
 
     // METODO PARA CREAR LA CONSULTA RESUMIDA DE SOLICITUD
-    public SolicitudResumenClienteDTO obtenerResumenCliente(Long solicitudId) {
+    public SolicitudResumenClienteDTO obtenerResumenCliente(Long solicitudId, String autHeader) {
+        
+        String token = autHeader.replace("Bearer ", "");
+        RestTemplate restTemplate = RestTemplateFactory.conToken(token);
 
         Solicitud solicitud = obtenerPorId(solicitudId);
 

@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import utn.frc.backend.tpi.logistica.dtos.EstadoSolicitudDto;
+
 import utn.frc.backend.tpi.logistica.dtos.PorcesarSolicitudDto;
 import utn.frc.backend.tpi.logistica.dtos.SolicitudDto;
 import utn.frc.backend.tpi.logistica.dtos.SolicitudPeticionTrasladoDTO;
@@ -46,8 +46,8 @@ public class SolicitudController {
 
     // CONTROLADOR PARA OBETENER LA SOLICITUD RESUMIDA
     @GetMapping("/{id}/resumen-cliente")
-    public ResponseEntity<SolicitudResumenClienteDTO> obtenerResumenCliente(@PathVariable Long id) {
-        SolicitudResumenClienteDTO resumen = solicitudService.obtenerResumenCliente(id);
+    public ResponseEntity<SolicitudResumenClienteDTO> obtenerResumenCliente(@PathVariable Long id, @RequestHeader("Authorization") String autHeader) {
+        SolicitudResumenClienteDTO resumen = solicitudService.obtenerResumenCliente(id, autHeader);
         return ResponseEntity.ok(resumen);
     }
 
