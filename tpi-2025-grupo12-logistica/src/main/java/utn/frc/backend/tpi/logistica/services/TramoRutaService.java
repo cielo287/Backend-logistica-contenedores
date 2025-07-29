@@ -136,9 +136,7 @@ public class TramoRutaService {
         Long contenedorId = dto.getContenedorId();
         Long estadoId = dto.getEstadoId();
         LocalDate fecha = dto.getFechaCambio();
-        System.out.println("ContenedorId: " + contenedorId);
-        System.out.println("EstadoId: " + estadoId);
-        System.out.println("FechaCambio: " + fecha);
+
 
         Optional<Solicitud> solicitudOp = solicitudRepository.findByContenedorId(contenedorId);
         if (solicitudOp.isEmpty())
@@ -147,23 +145,35 @@ public class TramoRutaService {
         Solicitud solicitud = solicitudOp.get();
         List<TramoRuta> tramos = solicitud.getTramos();
 
+
         // Estado: Retirado de origen
 
         if (estadoId == 1) {
+            long diasEstimados = Math.round(tramos.get(0).getTiempoEstimado() / 24.0);
             tramos.get(0).setFechaRealSalida(fecha);
+            tramos.get(0).setFechaEstimadaLlegada(fecha.plusDays(diasEstimados));
+            if(tramos.size() >= 2){
+                 long diasEstimados1 = Math.round(tramos.get(1).getTiempoEstimado() / 24.0);
+                tramos.get(1).setFechaEstimadaSalida(tramos.get(0).getFechaEstimadaLlegada().plusDays(1));
+                tramos.get(1).setFechaEstimadaLlegada(tramos.get(1).getFechaEstimadaSalida().plusDays(diasEstimados1));}
 
         }
 
         // Entregado en deposito
         else if (estadoId == 2) {
+            long diasEstimados = Math.round(tramos.get(1).getTiempoEstimado() / 24.0);
             tramos.get(0).setFechaRealLlegada(fecha);
+            tramos.get(1).setFechaEstimadaSalida(fecha.plusDays(1));
+            tramos.get(1).setFechaEstimadaLlegada(tramos.get(1).getFechaEstimadaSalida().plusDays(diasEstimados));
     
         }
 
         // Retirado de deposito
 
         else if (estadoId == 3) {
+            long diasEstimados = Math.round(tramos.get(1).getTiempoEstimado() / 24.0);
             tramos.get(1).setFechaRealSalida(fecha);
+            tramos.get(1).setFechaEstimadaLlegada(fecha.plusDays(diasEstimados));
     
         }
 

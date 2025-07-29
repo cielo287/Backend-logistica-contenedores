@@ -14,7 +14,6 @@ import utn.frc.backend.tpi.logistica.config.RestTemplateFactory;
 import utn.frc.backend.tpi.logistica.dtos.CamionDto;
 import utn.frc.backend.tpi.logistica.dtos.ContenedorDto;
 import utn.frc.backend.tpi.logistica.dtos.EstadoSimpleDTO;
-import utn.frc.backend.tpi.logistica.dtos.EstadoSolicitudDto;
 import utn.frc.backend.tpi.logistica.dtos.SolicitudResumenClienteDTO;
 import utn.frc.backend.tpi.logistica.models.Solicitud;
 import utn.frc.backend.tpi.logistica.models.TramoRuta;

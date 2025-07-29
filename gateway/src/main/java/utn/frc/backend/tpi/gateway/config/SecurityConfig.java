@@ -9,11 +9,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.web.server.WebFilter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
 import java.util.*;
@@ -78,14 +76,5 @@ public class SecurityConfig {
         }
         return (List<String>) realmAccess.get("roles");
     }
-
-    /*@Bean
-    public WebFilter logAuthHeader(){
-        return (exchange, chain) -> {
-            String autHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-            System.out.println("Authorization Header: " + autHeader);
-            return chain.filter(exchange);
-        };
-    }*/
     
 }
