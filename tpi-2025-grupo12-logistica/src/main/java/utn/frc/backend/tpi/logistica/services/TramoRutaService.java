@@ -28,6 +28,9 @@ public class TramoRutaService {
     @Autowired
     private SolicitudRepository solicitudRepository;
 
+    @Autowired
+    private TarifaService tarifaService;
+
     @Value("${servicio.pedidos.url:http://localhost:8082/api/pedidos}")
     private String baseUrl;
 
@@ -182,6 +185,20 @@ public class TramoRutaService {
             TramoRuta tramoFinal = tramos.size() == 2 ? tramos.get(1) : tramos.get(0);
             tramoFinal.setFechaRealLlegada(fecha);
             solicitud.setEsFinalizada(true);
+
+            // Calcular el costo real usando fechas reales
+            try {
+                double costoReal = tarifaService.calcularTarifaSolicitud(solicitud, "Bearer fake-token");
+                solicitud.setCostoEstimado(costoReal);
+            } catch (Exception e) {
+                System.err.println("Error al calcular el costo real: " + e.getMessage());
+            }
+            
+
+
+
+
+
         }
         solicitudRepository.save(solicitud);
         tramoRutaRepo.saveAll(tramos);

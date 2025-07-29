@@ -49,7 +49,7 @@ INSERT INTO contenedor (peso, volumen, estado_id, cliente_id) VALUES
   (1300.0, 9.0, 4, 1), -- Entregado en destino
   (950.0, 6.8, 4, 2), -- Entregado en destino
   (620.0, 4.0, 5, 1),
-  (10.0, 100.0, 5, 1);
+  (10.0, 10.0, 5, 1);
 
 
 -- ====================
