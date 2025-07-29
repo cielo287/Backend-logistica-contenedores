@@ -41,7 +41,6 @@ public class SecurityConfig {
                 .pathMatchers("/api/logistica/tramos-ruta/observer/estado").permitAll()
                 .pathMatchers("/api/logistica/solicitudes/{id}/resumen-cliente").hasAnyRole("cliente", "admin")
                 .pathMatchers(HttpMethod.POST, "/api/logistica/solicitudes").hasAnyRole("cliente", "admin")
-                .pathMatchers("/api/logistica/solicitudes/*").hasAnyRole("cliente", "admin")
                 .pathMatchers("/api/logistica/**").hasRole("admin")
                 .pathMatchers("/api/pedidos/contenedores/*/seguimiento").hasAnyRole("cliente", "admin")
                 .pathMatchers("/api/pedidos/contenedores/*").hasAnyRole("cliente", "admin")
