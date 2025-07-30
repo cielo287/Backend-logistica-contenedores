@@ -37,18 +37,22 @@ El sistema utiliza **Keycloak** para la autenticación mediante **tokens JWT**. 
 
 ### **Microservicio Logística**.
 
-### 1. Solicitar una Petición de Traslado
+#### 1. Solicitar una Petición de Traslado
 
-- **Método**: `POST`
-- **Ruta**: `/api/logistica/solicitudes`
+- **Método**: `POST`  
+- **Ruta**: `/api/logistica/solicitudes`  
 - **Body**:
 ```json
 {
   "idContenedor": 10,
   "idCiudadOrigen": 1,
   "idCiudadDestino": 2
-} ```
+}
+```
 
 - **Autenticación**: `ADMIN`, `CLIENTE`
 
+⚠️ El contenedor y las ciudades deben existir previamente en la base de datos. Se pueden crear desde el Microservicio de Pedidos:  
+`POST /api/pedidos/contenedores`  
+`POST /api/pedidos/ciudades`
 
