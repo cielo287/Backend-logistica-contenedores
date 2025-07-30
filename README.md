@@ -49,17 +49,18 @@ El sistema utiliza **Keycloak** para la autenticación mediante **tokens JWT**. 
   "idCiudadOrigen": 1,
   "idCiudadDestino": 2
 }
-
 - **Autenticación**: `ADMIN`, `CLIENTE`
+
 ⚠️ El contenedor y las ciudades deben existir previamente en la base de datos. Se pueden crear desde el Microservicio de Pedidos:
 POST /api/pedidos/contenedores
 POST /api/pedidos/ciudades
 
-2. ** Procesar las solicitudes de traslado **
+#### 2. ** Procesar las solicitudes de traslado **
 
-- **PUT** api/logistica/solicitudes/{id}/procesar-solicitudes
-- **Body**(JSON)
-
+- **Método**: `PUT`
+- **Ruta**: `/api/logistica/solicitudes/{id}/procesar-solicitud`
+- **Body**:
+```json
 {
     "FechaEstimadaDespacho": "2025-08-10",
     "camiónId": 1,
