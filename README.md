@@ -49,9 +49,5 @@ El sistema utiliza **Keycloak** para la autenticación mediante **tokens JWT**. 
   "idCiudadOrigen": 1,
   "idCiudadDestino": 2
 }
-- **Autenticación**: `ADMIN`, `CLIENTE`
 
-⚠️ El contenedor y las ciudades deben existir previamente en la base de datos. Se pueden crear desde el Microservicio de Pedidos:
-POST /api/pedidos/contenedores
-POST /api/pedidos/ciudades
 
