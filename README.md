@@ -35,10 +35,9 @@ El sistema utiliza **Keycloak** para la autenticación mediante **tokens JWT**. 
 
 ## 📚 Endpoints Principales y Ejemplos de Uso
 
-### ** Microservicio Logística **.
+### **Microservicio Logística**.
 
-```markdown
-#### 1. Solicitar una Petición de Traslado
+### 1. Solicitar una Petición de Traslado
 
 - **Método**: `POST`
 - **Ruta**: `/api/logistica/solicitudes`
@@ -48,6 +47,8 @@ El sistema utiliza **Keycloak** para la autenticación mediante **tokens JWT**. 
   "idContenedor": 10,
   "idCiudadOrigen": 1,
   "idCiudadDestino": 2
-}
+} ```
+
+- **Autenticación**: `ADMIN`, `CLIENTE`
 
 
