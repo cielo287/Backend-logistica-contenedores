@@ -56,3 +56,71 @@ El sistema utiliza **Keycloak** para la autenticación mediante **tokens JWT**. 
 `POST /api/pedidos/contenedores`  
 `POST /api/pedidos/ciudades`
 
+#### 2. Procesar las Solicitudes de Traslado
+
+- **Método**: `PUT`  
+- **Ruta**: `/api/logistica/solicitudes/{id}/procesar-solicitudes`  
+- **Body**:
+```json
+{
+  "FechaEstimadaDespacho": "2025-08-10",
+  "camiónId": 1,
+  "depositoId": 2
+}
+```
+
+- **Autenticación**: `ADMIN`
+
+⚠️ El depósito y el camión deben existir previamente en la base de datos. Se crean desde:  
+`POST /api/pedidos/depositos`  
+`POST /api/pedidos/camiones`
+
+🔄 Este endpoint genera los `TramoRuta` correspondientes usando la API de Google Distance Matrix, estableciendo fechas estimadas de llegada/salida y costos.
+
+#### 3. Consulta del Estado de la Solicitud
+
+- **Método**: `GET`  
+- **Ruta**: `/api/logistica/solicitudes/{id}/resumen-cliente`
+
+- **Autenticación**: `ADMIN`, `CLIENTE`
+
+#### 4. Informe de Desempeño del Servicio
+
+- **Método**: `GET`  
+- **Ruta**: `/api/solicitudes/informe-desempeno`
+
+- **Autenticación**: `ADMIN`
+
+#### Microservicio Pedidos - Cambio de Estado de un Contenedor
+
+- **Método**: `PUT`  
+- **Ruta**: `/api/pedidos/contenedores/{id}/estado`  
+- **Body**:
+```json
+{
+  "id": 1
+}
+```
+
+- **Autenticación**: `ADMIN`
+
+📡 Este cambio de estado emite un evento hacia el microservicio de logística para actualizar fechas reales y estado de la solicitud asociada.
+
+📌 **Notas Finales**
+
+- Todos los endpoints requieren autenticación vía token JWT.
+- Swagger UI está disponible en cada microservicio en la ruta `/swagger-ui.html` (si está habilitado).
+- En entorno local, Keycloak se puede acceder desde: `http://localhost:8083`.
+- Para correr el entorno local, es necesario tener **Docker Desktop** instalado.  
+  Luego, desde la carpeta `/infra`, ejecutar:
+
+```bash
+docker compose up -d
+```
+
+- Para detener los servicios:
+
+```bash
+docker compose down
+```
+
